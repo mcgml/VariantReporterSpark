@@ -1,84 +1,92 @@
 package nhs.genetics.cardiff;
 
-import htsjdk.variant.variantcontext.VariantContext;
-import htsjdk.variant.vcf.VCFCodec;
-import htsjdk.variant.vcf.VCFFileReader;
-import htsjdk.variant.vcf.VCFHeader;
-import htsjdk.variant.vcf.VCFHeaderVersion;
-import org.apache.log4j.Logger;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.SparkConf;
-import org.apache.spark.storage.StorageLevel;
-import scala.Tuple2;
+import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+/**
+ * Programme for filtering and writing variants using Apache Spark
+ *
+ * @author  Matt Lyon
+ * @since   2017-06-12
+ */
 
 public class Main {
 
-    private static final Logger logger = Logger.getLogger(Main.class);
-    private static final String VERSION = "1.0.0";
-    private static final String PROGRAM = "VariantReporterSpark";
-    private static VCFHeader vcfHeader;
-    private static VCFHeaderVersion vcfHeaderVersion;
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+
+    static final String VERSION = "1.0.0";
+    static final String PROGRAM = "VariantReporterSpark";
 
     public static void main(String[] args) {
 
-        //define I/O
-        File file = new File("/data/db/human/gatk/2.8/b37/1000G_phase1.indels.b37.vcf");
-        //File file = new File("/Users/ml/Documents/1000G_phase1.indels.b37.vcf");
+        boolean onlyPrintKnownRefSeq;
+        File variantCallFormatFile = null, preferredTranscriptsFile = null, output = null;
+        int threads = 1;
+        HashSet<String> preferredTranscripts;
 
-        //start spark
-        SparkConf sparkConf = new SparkConf().setAppName(Main.PROGRAM).setMaster("local[2]");
-        sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer");
-        sparkConf.set("spark.kryo.registrationRequired", "true");
-        JavaSparkContext javaSparkContext = new JavaSparkContext(sparkConf);
+        //parse command line
+        CommandLineParser commandLineParser = new BasicParser();
+        CommandLine commandLine = null;
+        HelpFormatter formatter = new HelpFormatter();
+        Options options = new Options();
 
-        //read vcf headers & configure codec
-        VCFFileReader vcfFileReader = new VCFFileReader(file);
-        vcfHeader =  vcfFileReader.getFileHeader();
-        vcfHeaderVersion = VCFHeaderVersion.VCF4_2;
-        vcfFileReader.close();
+        options.addOption("V", "Variant", true, "Path to input VCF file");
+        options.addOption("P", "PreferredTranscript", true, "Path to preferred transcript list");
+        options.addOption("K", "Known", false, "Report only known RefSeq transcripts (NM)");
+        options.addOption("O", "Output", true, "Output filename");
+        options.addOption("T", "Threads", true, "Execution threads [" + threads + "]");
 
-        //read VCF and map to RDD
-        JavaRDD<VariantContext> variants = javaSparkContext.textFile(file.toString())
-                .filter(line -> !line.startsWith("#"))
-                .map(line -> {
-                    final VCFCodec vcfCodec = new VCFCodec();
-                    vcfCodec.setVCFHeader(vcfHeader, vcfHeaderVersion);
-                    return vcfCodec.decode(line);
-                })
-                .filter(VariantContext::isNotFiltered);
+        try {
+            commandLine = commandLineParser.parse(options, args);
 
-        //retain variants for later...
-        variants.persist(StorageLevel.MEMORY_ONLY());
+            variantCallFormatFile = commandLine.hasOption("V") ? new File(commandLine.getOptionValue("V")) : null;
+            preferredTranscriptsFile = commandLine.hasOption("P") ? new File(commandLine.getOptionValue("P")) : null;
+            onlyPrintKnownRefSeq = commandLine.hasOption("K");
+            output = commandLine.hasOption("O") ? new File(commandLine.getOptionValue("O")) : null;
+            variantCallFormatFile = commandLine.hasOption("V") ? new File(commandLine.getOptionValue("V")) : null;
+            if (commandLine.hasOption("T")) threads = Integer.parseInt(commandLine.getOptionValue("T"));
 
-        //count lengths of indels
-        JavaPairRDD<Integer, Integer> counts = variants
-                .flatMap(variantContext -> variantContext.getIndelLengths().iterator())
-                .mapToPair(len -> new Tuple2<>(len, 1))
-                .reduceByKey((a, b) -> a + b);
-
-        List<Tuple2<Integer, Integer>> countscollected = counts.collect();
-
-        try (PrintWriter printWriter = new PrintWriter("out.txt")){
-            for (Tuple2<Integer, Integer> iter : countscollected){
-                printWriter.print(iter._1);
-                printWriter.print("\t");
-                printWriter.print(iter._2);
-                printWriter.println();
-            }
-        } catch (IOException e){
-            logger.error("Could not write to output file: " + e.getMessage());
+        } catch (ParseException | NullPointerException e){
+            formatter.printHelp(PROGRAM + " " + VERSION, options);
+            LOGGER.log(Level.SEVERE, "Check args: " + e.getMessage());
             System.exit(-1);
         }
 
-        //stop spark
-        javaSparkContext.close();
+        //parse preferred transcripts list
+        if (preferredTranscriptsFile != null){
+            try (Stream<String> stream = Files.lines(Paths.get(commandLine.getOptionValue("T")))) {
+                preferredTranscripts = stream.collect(Collectors.toCollection(HashSet::new));
+            } catch (IOException e){
+                LOGGER.log(Level.SEVERE,"Could not parse preferred transcript list: " + e.getMessage());
+                System.exit(-1);
+            }
+        }
+
+        //parse VCF headers
+        VCFHeaders vcfHeaders = new VCFHeaders(variantCallFormatFile);
+        try {
+            vcfHeaders.setVCFHeaders();
+            vcfHeaders.setVCFVersion();
+            vcfHeaders.setVEPVersion();
+        } catch (NullPointerException e){
+            LOGGER.log(Level.WARNING, "Could not read VEP header. Assuming no annotations, continuing without it.");
+        } catch (IOException|IllegalArgumentException e){
+            LOGGER.log(Level.SEVERE, "Could not read VCF version or not supported: " + e.getMessage());
+            System.exit(-1);
+        }
+
+        //report variants
+        VCFReaderSpark vcfReaderSpark = new VCFReaderSpark(variantCallFormatFile, vcfHeaders, 2);
+        vcfReaderSpark.loadVariants();
 
     }
 
