@@ -86,7 +86,7 @@ public class Main {
 
         //report variants
         VCFReaderSpark vcfReaderSpark = new VCFReaderSpark(variantCallFormatFile, vcfHeaders, 2);
-        vcfReaderSpark.loadVariants();
+        vcfReaderSpark.filterVariants();
 
     }
 
