@@ -35,7 +35,7 @@ public class Main {
         HashSet<String> preferredTranscripts;
 
         //parse command line
-        CommandLineParser commandLineParser = new DefaultParser();
+        CommandLineParser commandLineParser = new BasicParser();
         CommandLine commandLine = null;
         HelpFormatter formatter = new HelpFormatter();
         Options options = new Options();
@@ -91,7 +91,7 @@ public class Main {
         }
 
         //report variants
-        VCFReaderSpark.filterVariants(variantCallFormatFile, vcfHeaders, 2);
+        VCFReaderSpark.filterVariants(variantCallFormatFile, vcfHeaders, threads);
 
     }
 
