@@ -1,10 +1,11 @@
 package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.VariantContext;
-import nhs.genetics.cardiff.framework.spark.FrameworkSparkFilter;
 import org.apache.spark.api.java.function.Function;
 
-import static nhs.genetics.cardiff.framework.spark.FrameworkSparkFilter.*;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAlleleFrequencyLow;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadExomeFrequency;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadGenomeFrequency;
 
 //TODO parition by gene
 public class AutosomalRecessiveSparkFilter implements Function<VariantContext, Boolean> {

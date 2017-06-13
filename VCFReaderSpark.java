@@ -1,16 +1,18 @@
 package nhs.genetics.cardiff;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
 import nhs.genetics.cardiff.framework.spark.filter.AutosomalDominantSparkFilter;
 import nhs.genetics.cardiff.framework.spark.filter.FunctionalConsequenceSparkFilter;
+import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
 
 import java.io.File;
-import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  * Class for reading and filtering variants
@@ -19,19 +21,25 @@ import java.io.Serializable;
  * @since   2017-06-12
  */
 
-public class VCFReaderSpark implements Serializable {
+public class VCFReaderSpark {
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private File file;
-    private VCFHeaders vcfHeaders;
-    private Integer threads;
+    public static VepAnnotationObject deserialiseVepAnnotation(String[] vepHeaders, String vepFields){
+        HashMap<String, String> hashMap = new HashMap<String, String>();
 
-    public VCFReaderSpark(File file, VCFHeaders vcfHeaders, Integer threads){
-        this.file = file;
-        this.vcfHeaders = vcfHeaders;
-        this.threads= threads;
+        //split annotation fields
+        String[] annotations = vepFields.split("\\|");
+
+        //pair headers with fields
+        for (int i=0 ; i < annotations.length; i++) {
+            hashMap.put(vepHeaders[i].trim(), annotations[i].trim());
+        }
+
+        return objectMapper.convertValue(hashMap, VepAnnotationObject.class);
     }
 
-    public void filterVariants(){
+    public static void filterVariants(File file, VCFHeaders vcfHeaders, Integer threads){
+
         SparkConf sparkConf = new SparkConf().setAppName(Main.PROGRAM).setMaster("local[" + threads + "]");
         //sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer"); // TODO production
         //sparkConf.set("spark.kryo.registrationRequired", "true"); // TODO production
@@ -50,11 +58,14 @@ public class VCFReaderSpark implements Serializable {
 
         //autosomal dominant variants
         JavaRDD<VariantContext> autosomalDominantVariants = variants
-                .filter(new AutosomalDominantSparkFilter("14M01382"))
-                .filter(new FunctionalConsequenceSparkFilter("14M01382"));
+                .filter(new AutosomalDominantSparkFilter("14M01382"));
 
-        //write to console
-        autosomalDominantVariants.collect().forEach(System.out::println);
+        //functional filtering
+        JavaRDD<VariantContext> functionallySignificantVariants = autosomalDominantVariants
+                .filter(new FunctionalConsequenceSparkFilter("14M01382", vcfHeaders.getVepHeaders()));
+
+        //write variants
+        WriteVariants.toTextFile(functionallySignificantVariants.collect(), "14M01382");
 
         javaSparkContext.close();
     }

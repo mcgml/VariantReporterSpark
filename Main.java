@@ -1,5 +1,6 @@
 package nhs.genetics.cardiff;
 
+import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Programme for filtering and writing variants using Apache Spark
+ * Program for filtering and writing variants using Apache Spark
  *
  * @author  Matt Lyon
  * @since   2017-06-12
@@ -74,19 +75,23 @@ public class Main {
         //parse VCF headers
         VCFHeaders vcfHeaders = new VCFHeaders(variantCallFormatFile);
         try {
-            vcfHeaders.setVCFHeaders();
-            vcfHeaders.setVCFVersion();
-            vcfHeaders.setVEPVersion();
-        } catch (NullPointerException e){
-            LOGGER.log(Level.WARNING, "Could not read VEP header. Assuming no annotations, continuing without it.");
+
+            vcfHeaders.populateVCFHeaders();
+            vcfHeaders.populateVCFVersion();
+
+            try {
+                vcfHeaders.populateVEPHeaders();
+            } catch (MissingVEPHeaderException e){
+                LOGGER.log(Level.WARNING, e.getMessage());
+            }
+
         } catch (IOException|IllegalArgumentException e){
             LOGGER.log(Level.SEVERE, "Could not read VCF version or not supported: " + e.getMessage());
             System.exit(-1);
         }
 
         //report variants
-        VCFReaderSpark vcfReaderSpark = new VCFReaderSpark(variantCallFormatFile, vcfHeaders, 2);
-        vcfReaderSpark.filterVariants();
+        VCFReaderSpark.filterVariants(variantCallFormatFile, vcfHeaders, 2);
 
     }
 

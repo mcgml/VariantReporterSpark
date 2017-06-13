@@ -1,12 +1,11 @@
 package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.VariantContext;
-import nhs.genetics.cardiff.framework.spark.FrameworkSparkFilter;
 import org.apache.spark.api.java.function.Function;
 
-import static nhs.genetics.cardiff.framework.spark.FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow;
-import static nhs.genetics.cardiff.framework.spark.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadExomeFrequency;
-import static nhs.genetics.cardiff.framework.spark.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadGenomeFrequency;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadExomeFrequency;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadGenomeFrequency;
 
 public class MaleXDominantSparkFilter implements Function<VariantContext, Boolean> {
     private final String sample;

@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.framework.spark;
+package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -12,15 +12,6 @@ import java.util.Set;
  * Created by ml on 12/06/2017.
  */
 public class FrameworkSparkFilter {
-
-    public static final Set<String> autosomes = new HashSet<String>() {{
-        add("1");add("2");add("3");add("4");add("5");add("6");add("7");add("8");add("9");add("10");
-        add("11");add("12");add("13");add("14");add("15");add("16");add("17");add("18");add("19");
-        add("20");add("21");add("22");
-    }};
-    public static final Set<String> x = new HashSet<String>() {{
-        add("X");
-    }};
 
     public static boolean areAnyAlternativeAlleleCountsLow(VariantContext variantContext, String sample, int maxAlleleCount){
         List<Integer> alleleCounts = variantContext.getAttributeAsIntList("AC",0);
@@ -91,4 +82,66 @@ public class FrameworkSparkFilter {
         }
         return doubles;
     }
+
+    public static final Set<String> autosomes = new HashSet<String>() {{
+        add("1");
+        add("2");
+        add("3");
+        add("4");
+        add("5");
+        add("6");
+        add("7");
+        add("8");
+        add("9");
+        add("10");
+        add("11");
+        add("12");
+        add("13");
+        add("14");
+        add("15");
+        add("16");
+        add("17");
+        add("18");
+        add("19");
+        add("20");
+        add("21");
+        add("22");
+    }};
+    public static final Set<String> x = new HashSet<String>() {{
+        add("X");
+    }};
+    public static final Set<String> retainedFunctionalConsequences = new HashSet<String>() {{
+        //add("intergenic_variant");
+        //add("intron_variant");
+        //add("upstream_gene_variant");
+        //add("downstream_gene_variant");
+        //add("5_prime_utr_variant");
+        //add("3_prime_utr_variant");
+        add("splice_region_variant");
+        add("splice_donor_variant");
+        add("splice_acceptor_variant");
+        add("frameshift_variant");
+        add("transcript_ablation");
+        add("transcript_amplification");
+        add("inframe_insertion");
+        add("inframe_deletion");
+        add("synonymous_variant");
+        add("stop_retained_variant");
+        add("missense_variant");
+        add("initiator_codon_variant");
+        add("stop_gained");
+        add("stop_lost");
+        //add("mature_mirna_variant");
+        //add("non_coding_exon_variant");
+        //add("nc_transcript_variant");
+        add("incomplete_terminal_codon_variant");
+        //add("nmd_transcript_variant");
+        //add("coding_sequence_variant");
+        add("tfbs_ablation");
+        add("tfbs_amplification");
+        add("tf_binding_site_variant");
+        //add("regulatory_region_variant");
+        //add("regulatory_region_ablation");
+        //add("regulatory_region_amplification");
+    }};
 }
