@@ -91,7 +91,12 @@ public class Main {
         }
 
         //report variants
-        VCFReaderSpark.filterVariants(variantCallFormatFile, vcfHeaders, threads);
+        try {
+            VCFReaderSpark.filterVariants(variantCallFormatFile, vcfHeaders, threads);
+        } catch (IOException e){
+            LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
+            System.exit(-1);
+        }
 
     }
 

@@ -13,6 +13,13 @@ import java.util.Set;
  */
 public class FrameworkSparkFilter {
 
+    public enum Workflow {
+        AUTOSOMAL_DOMINANNT,
+        AUTOSOMAL_RECESSIVE,
+        FEMALE_X,
+        MALE_X
+    }
+
     public static boolean areAnyAlternativeAlleleCountsLow(VariantContext variantContext, String sample, int maxAlleleCount){
         List<Integer> alleleCounts = variantContext.getAttributeAsIntList("AC",0);
 
