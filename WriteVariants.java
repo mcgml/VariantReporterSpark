@@ -54,6 +54,8 @@ public class WriteVariants {
                 }
             }
 
+            System.out.println(variantContext);
+
         }
     }
 }

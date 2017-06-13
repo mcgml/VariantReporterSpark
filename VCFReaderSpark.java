@@ -65,7 +65,7 @@ public class VCFReaderSpark {
                 .filter(new FunctionalConsequenceSparkFilter("14M01382", vcfHeaders.getVepHeaders()));
 
         //write variants
-        WriteVariants.toTextFile(functionallySignificantVariants.collect(), "14M01382");
+        WriteVariants.toTextFile(functionallySignificantVariants.collect(), "14M01382", vcfHeaders);
 
         javaSparkContext.close();
     }
