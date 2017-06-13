@@ -2,7 +2,6 @@ package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
-import nhs.genetics.cardiff.VCFReaderSpark;
 import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
 import org.apache.spark.api.java.function.Function;
 
@@ -26,10 +25,10 @@ public class FunctionalConsequenceSparkFilter implements Function<VariantContext
 
         if (variantContext.hasAttribute("CSQ")){
             try {
-                vepAnnotationObjects.add(VCFReaderSpark.deserialiseVepAnnotation(vepHeaders, (String) variantContext.getAttribute("CSQ")));
+                vepAnnotationObjects.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, (String) variantContext.getAttribute("CSQ")));
             } catch (ClassCastException e) {
                 for (String field : (ArrayList<String>) variantContext.getAttribute("CSQ")) {
-                    vepAnnotationObjects.add(VCFReaderSpark.deserialiseVepAnnotation(vepHeaders, field));
+                    vepAnnotationObjects.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, field));
                 }
             }
 

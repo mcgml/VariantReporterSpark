@@ -29,10 +29,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        boolean onlyPrintKnownRefSeq;
-        File variantCallFormatFile = null, preferredTranscriptsFile = null, output = null;
-        int threads = 1;
-        HashSet<String> preferredTranscripts;
+        Integer threads = null;
+        Boolean onlyPrintKnownRefSeq = null;
+        File variantCallFormatFile = null, preferredTranscriptsFile = null;
+        HashSet<String> preferredTranscripts = null;
 
         //parse command line
         CommandLineParser commandLineParser = new BasicParser();
@@ -43,8 +43,7 @@ public class Main {
         options.addOption("V", "Variant", true, "Path to input VCF file");
         options.addOption("P", "PreferredTranscript", true, "Path to preferred transcript list");
         options.addOption("K", "Known", false, "Report only known RefSeq transcripts (NM)");
-        options.addOption("O", "Output", true, "Output filename");
-        options.addOption("T", "Threads", true, "Execution threads [" + threads + "]");
+        options.addOption("T", "Threads", true, "Execution threads");
 
         try {
             commandLine = commandLineParser.parse(options, args);
@@ -52,9 +51,7 @@ public class Main {
             variantCallFormatFile = commandLine.hasOption("V") ? new File(commandLine.getOptionValue("V")) : null;
             preferredTranscriptsFile = commandLine.hasOption("P") ? new File(commandLine.getOptionValue("P")) : null;
             onlyPrintKnownRefSeq = commandLine.hasOption("K");
-            output = commandLine.hasOption("O") ? new File(commandLine.getOptionValue("O")) : null;
-            variantCallFormatFile = commandLine.hasOption("V") ? new File(commandLine.getOptionValue("V")) : null;
-            if (commandLine.hasOption("T")) threads = Integer.parseInt(commandLine.getOptionValue("T"));
+            threads = commandLine.hasOption("T") ? Integer.parseInt(commandLine.getOptionValue("T")) : 1;
 
         } catch (ParseException | NullPointerException e){
             formatter.printHelp(PROGRAM + " " + VERSION, options);
@@ -92,7 +89,7 @@ public class Main {
 
         //report variants
         try {
-            VCFReaderSpark.filterVariants(variantCallFormatFile, vcfHeaders, threads);
+            VCFReaderSpark.reportVariants(variantCallFormatFile, vcfHeaders, threads, preferredTranscripts, onlyPrintKnownRefSeq);
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
             System.exit(-1);

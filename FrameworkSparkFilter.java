@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by ml on 12/06/2017.
+ * Accessory functions for Spark filters
+ *
+ * @author  Matt Lyon
+ * @since   2017-06-12
  */
 public class FrameworkSparkFilter {
 
     public enum Workflow {
-        AUTOSOMAL_DOMINANNT,
+        AUTOSOMAL_DOMINANT,
         AUTOSOMAL_RECESSIVE,
         FEMALE_X,
         MALE_X

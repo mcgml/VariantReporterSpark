@@ -1,6 +1,7 @@
 package nhs.genetics.cardiff.framework.vep;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Arrays;
@@ -15,6 +16,21 @@ import java.util.stream.Collectors;
  */
 
 public class VepAnnotationObject {
+    public static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static VepAnnotationObject deserialiseVepAnnotation(String[] vepHeaders, String vepFields){
+        HashMap<String, String> hashMap = new HashMap<String, String>();
+
+        //split annotation fields
+        String[] annotations = vepFields.split("\\|");
+
+        //pair headers with fields
+        for (int i=0 ; i < annotations.length; i++) {
+            hashMap.put(vepHeaders[i].trim(), annotations[i].trim());
+        }
+
+        return objectMapper.convertValue(hashMap, VepAnnotationObject.class);
+    }
 
     @JsonProperty("Allele")
     @JsonDeserialize(using = StringDeserializer.class)
