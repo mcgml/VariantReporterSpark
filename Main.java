@@ -35,7 +35,7 @@ public class Main {
         HashSet<String> preferredTranscripts;
 
         //parse command line
-        CommandLineParser commandLineParser = new BasicParser();
+        CommandLineParser commandLineParser = new DefaultParser();
         CommandLine commandLine = null;
         HelpFormatter formatter = new HelpFormatter();
         Options options = new Options();
