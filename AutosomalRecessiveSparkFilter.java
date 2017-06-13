@@ -18,7 +18,7 @@ public class AutosomalRecessiveSparkFilter implements Function<VariantContext, B
     @Override
     public Boolean call(VariantContext variantContext) {
         return FrameworkSparkFilter.autosomes.contains(variantContext.getContig()) &&
-                areAnyAlternativeAlleleFrequencyLow(variantContext, sample, 0.1) &&
+                areAnyAlternativeAlleleFrequencyLow(variantContext, sample, 0.05) &&
                 !areAnyAlternativeAllelesHighGnomadExomeFrequency(variantContext, sample, 0.05) &&
                 !areAnyAlternativeAllelesHighGnomadGenomeFrequency(variantContext, sample, 0.05);
 

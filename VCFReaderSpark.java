@@ -35,7 +35,8 @@ public class VCFReaderSpark {
                     final VCFCodec vcfCodec = new VCFCodec();
                     vcfCodec.setVCFHeader(vcfHeaders.getVcfHeader(), vcfHeaders.getVcfHeaderVersion());
                     return vcfCodec.decode(line);
-                });
+                })
+                .filter(VariantContext::isNotFiltered);
         variants.persist(StorageLevel.MEMORY_ONLY());
 
         //filter variants for each sample

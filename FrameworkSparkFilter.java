@@ -14,6 +14,8 @@ import java.util.Set;
  * @author  Matt Lyon
  * @since   2017-06-12
  */
+
+//TODO check allele lookups
 public class FrameworkSparkFilter {
 
     public enum Workflow {

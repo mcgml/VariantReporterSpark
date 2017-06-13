@@ -14,7 +14,6 @@ public class NonVariantBySampleSparkFilter implements Function<VariantContext, B
     public Boolean call(VariantContext variantContext) {
         return !variantContext.getGenotype(sample).isFiltered() &&
                 !variantContext.getGenotype(sample).isHomRef() &&
-                !variantContext.getGenotype(sample).isHomRef() &&
                 !variantContext.getGenotype(sample).isNoCall();
     }
 }
