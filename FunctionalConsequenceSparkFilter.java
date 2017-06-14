@@ -24,6 +24,7 @@ public class FunctionalConsequenceSparkFilter implements Function<VariantContext
         HashSet<VepAnnotationObject> vepAnnotationObjects = new HashSet<>();
 
         if (variantContext.hasAttribute("CSQ")){
+
             try {
                 vepAnnotationObjects.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, (String) variantContext.getAttribute("CSQ")));
             } catch (ClassCastException e) {

@@ -42,12 +42,58 @@ public class VCFReaderSpark {
         //filter variants for each sample
         for (String sample : vcfHeaders.getVcfHeader().getSampleNamesInOrder()){
 
+            //Autosomal dominant
             WriteVariants.toTextFile(
                     variants
                     .filter(new NonVariantBySampleSparkFilter(sample))
-                    .filter(new AutosomalRecessiveSparkFilter(sample))
+                    .filter(new AutosomalDominantSparkFilter(sample))
                     .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()))
                     .collect(),
+                    sample,
+                    vcfHeaders.getVepHeaders(),
+                    FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT,
+                    preferredTranscripts,
+                    onlyPrintKnownRefSeq
+            );
+
+            //X-linked Male
+            WriteVariants.toTextFile(
+                    variants
+                            .filter(new NonVariantBySampleSparkFilter(sample))
+                            .filter(new MaleXDominantSparkFilter(sample))
+                            .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()))
+                            .collect(),
+                    sample,
+                    vcfHeaders.getVepHeaders(),
+                    FrameworkSparkFilter.Workflow.MALE_X,
+                    preferredTranscripts,
+                    onlyPrintKnownRefSeq
+            );
+
+            //X-linked female
+            WriteVariants.toTextFile(
+                    variants
+                            .filter(new NonVariantBySampleSparkFilter(sample))
+                            .filter(new FemaleXDominantSparkFilter(sample))
+                            .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()))
+                            .collect(),
+                    sample,
+                    vcfHeaders.getVepHeaders(),
+                    FrameworkSparkFilter.Workflow.FEMALE_X,
+                    preferredTranscripts,
+                    onlyPrintKnownRefSeq
+            );
+
+            //autosomal recessive
+            JavaRDD<VariantContext> autosomalRecessiveCandidates = variants
+                    .filter(new NonVariantBySampleSparkFilter(sample))
+                    .filter(new AutosomalRecessiveSparkFilter(sample))
+                    .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()));
+
+            //TODO count by gene
+
+            WriteVariants.toTextFile(
+                    autosomalRecessiveCandidates.collect(),
                     sample,
                     vcfHeaders.getVepHeaders(),
                     FrameworkSparkFilter.Workflow.AUTOSOMAL_RECESSIVE,

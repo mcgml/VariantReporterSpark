@@ -38,19 +38,6 @@ public class FrameworkSparkFilter {
 
         return false;
     }
-    public static boolean areAnyAlternativeAlleleFrequencyLow(VariantContext variantContext, String sample, double maxAlleleFrequency){
-        List<Double> alleleFrequency = variantContext.getAttributeAsDoubleList("AF",0);
-
-        for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
-            if (allele.isNonReference()){
-                if (alleleFrequency.get(variantContext.getAlleleIndex(allele) - 1) <= maxAlleleFrequency){
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
     public static boolean areAnyAlternativeAllelesHighGnomadExomeFrequency(VariantContext variantContext, String sample, double maxAlleleFrequency){
         List<Double> alleleFrequencies = stringListToDoubleList(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Exome.AF_POPMAX","."));
 
@@ -82,6 +69,9 @@ public class FrameworkSparkFilter {
             }
         }
         return false;
+    }
+    public static int getAlleleNumFromAllele(VariantContext variantContext, Allele allele){
+        return variantContext.getAlleleIndex(allele);
     }
     private static List<Double> stringListToDoubleList(List<String> strings){
         ArrayList<Double> doubles = new ArrayList<>();
