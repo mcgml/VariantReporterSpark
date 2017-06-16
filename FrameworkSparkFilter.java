@@ -15,7 +15,6 @@ import java.util.Set;
  * @since   2017-06-12
  */
 
-//TODO check allele lookups
 public class FrameworkSparkFilter {
 
     public enum Workflow {
@@ -28,10 +27,12 @@ public class FrameworkSparkFilter {
     public static boolean areAnyAlternativeAlleleCountsLow(VariantContext variantContext, String sample, int maxAlleleCount){
         List<Integer> alleleCounts = variantContext.getAttributeAsIntList("AC",0);
 
-        for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
-            if (allele.isNonReference()){
-                if (alleleCounts.get(variantContext.getAlleleIndex(allele) - 1) <= maxAlleleCount){
-                    return true;
+        if (alleleCounts != null && alleleCounts.size() > 0){
+            for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
+                if (allele.isNonReference()){
+                    if (alleleCounts.get(variantContext.getAlleleIndex(allele) - 1) <= maxAlleleCount){
+                        return true;
+                    }
                 }
             }
         }
@@ -41,37 +42,40 @@ public class FrameworkSparkFilter {
     public static boolean areAnyAlternativeAllelesHighGnomadExomeFrequency(VariantContext variantContext, String sample, double maxAlleleFrequency){
         List<Double> alleleFrequencies = stringListToDoubleList(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Exome.AF_POPMAX","."));
 
-        for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
-            if (allele.isNonReference()){
-                try {
-                    if (alleleFrequencies.get(variantContext.getAlleleIndex(allele) - 1) > maxAlleleFrequency){
-                        return true;
-                    }
-                } catch (IndexOutOfBoundsException |NumberFormatException e){
+        if (alleleFrequencies != null && alleleFrequencies.size() > 0) {
+            for (Allele allele : variantContext.getGenotype(sample).getAlleles()) {
+                if (allele.isNonReference()) {
+                    try {
+                        if (alleleFrequencies.get(variantContext.getAlleleIndex(allele) - 1) > maxAlleleFrequency) {
+                            return true;
+                        }
+                    } catch (IndexOutOfBoundsException | NumberFormatException e) {
 
+                    }
                 }
             }
         }
+
         return false;
     }
     public static boolean areAnyAlternativeAllelesHighGnomadGenomeFrequency(VariantContext variantContext, String sample, double maxAlleleFrequency){
         List<Double> alleleFrequencies = stringListToDoubleList(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Genome_chr" + variantContext.getContig() + ".AF_POPMAX","."));
 
-        for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
-            if (allele.isNonReference()){
-                try {
-                    if (alleleFrequencies.get(variantContext.getAlleleIndex(allele) - 1) > maxAlleleFrequency){
-                        return true;
-                    }
-                } catch (IndexOutOfBoundsException | NumberFormatException e){
+        if (alleleFrequencies != null && alleleFrequencies.size() > 0) {
+            for (Allele allele : variantContext.getGenotype(sample).getAlleles()) {
+                if (allele.isNonReference()) {
+                    try {
+                        if (alleleFrequencies.get(variantContext.getAlleleIndex(allele) - 1) > maxAlleleFrequency) {
+                            return true;
+                        }
+                    } catch (IndexOutOfBoundsException | NumberFormatException e) {
 
+                    }
                 }
             }
         }
+
         return false;
-    }
-    public static int getAlleleNumFromAllele(VariantContext variantContext, Allele allele){
-        return variantContext.getAlleleIndex(allele);
     }
     private static List<Double> stringListToDoubleList(List<String> strings){
         ArrayList<Double> doubles = new ArrayList<>();

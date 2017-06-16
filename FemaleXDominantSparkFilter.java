@@ -18,7 +18,6 @@ public class FemaleXDominantSparkFilter implements Function<VariantContext, Bool
     @Override
     public Boolean call(VariantContext variantContext) {
         return FrameworkSparkFilter.x.contains(variantContext.getContig()) &&
-                !variantContext.getGenotype(sample).isHomRef() &&
                 areAnyAlternativeAlleleCountsLow(variantContext, sample, 4) &&
                 !areAnyAlternativeAllelesHighGnomadExomeFrequency(variantContext, sample, 0.001) &&
                 !areAnyAlternativeAllelesHighGnomadGenomeFrequency(variantContext, sample, 0.01);
