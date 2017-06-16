@@ -24,13 +24,34 @@ public class FrameworkSparkFilter {
         MALE_X
     }
 
+    /**
+     * Used to get the 0-based index for info fields from alt allele (AC)
+     * */
+    public static int getAlternativeAlleleNumIndex(VariantContext variantContext, Allele allele){
+        return variantContext.getAlleleIndex(allele) - 1;
+    }
+
+    /**
+     * Used to get the 0-based index for info fields from all allele (AF)
+     * */
+    public static int getAllAlleleNumIndex(VariantContext variantContext, Allele allele){
+        return variantContext.getAlleleIndex(allele);
+    }
+
+    /**
+     * Used to get the allele num for vep field
+     * */
+    public static int getVepAlleleNumIndex(VariantContext variantContext, Allele allele){
+        return variantContext.getAlleleIndex(allele);
+    }
+
     public static boolean areAnyAlternativeAlleleCountsLow(VariantContext variantContext, String sample, int maxAlleleCount){
         List<Integer> alleleCounts = variantContext.getAttributeAsIntList("AC",0);
 
         if (alleleCounts != null && alleleCounts.size() > 0){
             for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
                 if (allele.isNonReference()){
-                    if (alleleCounts.get(variantContext.getAlleleIndex(allele) - 1) <= maxAlleleCount){
+                    if (alleleCounts.get(getAlternativeAlleleNumIndex(variantContext, allele)) <= maxAlleleCount){
                         return true;
                     }
                 }
@@ -46,7 +67,7 @@ public class FrameworkSparkFilter {
             for (Allele allele : variantContext.getGenotype(sample).getAlleles()) {
                 if (allele.isNonReference()) {
                     try {
-                        if (alleleFrequencies.get(variantContext.getAlleleIndex(allele) - 1) > maxAlleleFrequency) {
+                        if (alleleFrequencies.get(getAlternativeAlleleNumIndex(variantContext, allele)) > maxAlleleFrequency) {
                             return true;
                         }
                     } catch (IndexOutOfBoundsException | NumberFormatException e) {
@@ -65,7 +86,7 @@ public class FrameworkSparkFilter {
             for (Allele allele : variantContext.getGenotype(sample).getAlleles()) {
                 if (allele.isNonReference()) {
                     try {
-                        if (alleleFrequencies.get(variantContext.getAlleleIndex(allele) - 1) > maxAlleleFrequency) {
+                        if (alleleFrequencies.get(getAlternativeAlleleNumIndex(variantContext, allele)) > maxAlleleFrequency) {
                             return true;
                         }
                     } catch (IndexOutOfBoundsException | NumberFormatException e) {

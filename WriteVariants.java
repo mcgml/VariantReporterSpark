@@ -62,7 +62,7 @@ public class WriteVariants {
                     if (allele.isNonReference() && !allele.getBaseString().equals("*")){
 
                         boolean printed = false;
-                        int alleleNum = variantContext.getAlleleIndex(allele) - 1;
+                        int alleleNum = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
 
                         GenomeVariant genomeVariant = new GenomeVariant(variantContext.getContig(), variantContext.getStart(), variantContext.getReference().getBaseString(), allele.getBaseString());
                         genomeVariant.convertToMinimalRepresentation();
