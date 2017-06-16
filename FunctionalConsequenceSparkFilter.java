@@ -6,7 +6,6 @@ import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
 import org.apache.spark.api.java.function.Function;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 
 import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.retainedFunctionalConsequences;

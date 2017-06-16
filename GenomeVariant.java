@@ -1,5 +1,11 @@
 package nhs.genetics.cardiff.framework;
 
+import htsjdk.variant.variantcontext.GenotypeType;
+import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
+
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * A class for chromosomal changes.
  *
@@ -7,29 +13,22 @@ package nhs.genetics.cardiff.framework;
  * @version 2.0
  * @since   2016-05-09
  */
-public class GenomeVariant {
+public class GenomeVariant implements Serializable {
 
     private String contig, ref, alt;
-    private int pos;
+    private int start, end;
+    private GenotypeType genotypeType;
+    private List<VepAnnotationObject> annotations;
+    private Integer count;
+    private Double frequency;
 
-    public GenomeVariant(String contig, int pos, String ref, String alt){
+    public GenomeVariant(String contig, int start, int end, String ref, String alt, GenotypeType genotypeType){
         this.contig = contig;
-        this.pos = pos;
+        this.start = start;
+        this.end = end;
         this.ref = ref;
         this.alt = alt;
-    }
-
-    public GenomeVariant(String s){ //use 1:111000A>T
-
-        String[] split1 = s.split(":"); //get contig
-        String[] split2 = split1[1].split("\\D"); //get pos
-        String[] split3 = split1[1].split("\\d"); //get ref>alt
-        String[] split4 = split3[split3.length - 1].split(">");
-
-        this.contig = split1[0];
-        this.pos = Integer.parseInt(split2[0]);
-        this.ref = split4[0];
-        this.alt = split4[1];
+        this.genotypeType = genotypeType;
     }
 
     public void convertToMinimalRepresentation(){
@@ -61,7 +60,7 @@ public class GenomeVariant {
                     break;
                 }
 
-                ++i; ++j; ++pos;
+                ++i; ++j; ++start; --end;
             }
 
             ref = ref.substring(i - 1);
@@ -80,8 +79,11 @@ public class GenomeVariant {
     public String getAlt(){
         return alt;
     }
-    public int getPos(){
-        return pos;
+    public int getStart() {
+        return start;
+    }
+    public int getEnd() {
+        return end;
     }
     public boolean isSnp(){
         return (ref.length() == 1 && alt.length() == 1);
@@ -89,32 +91,26 @@ public class GenomeVariant {
     public boolean isIndel(){
         return (ref.length() != 1 || alt.length() != 1);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        GenomeVariant that = (GenomeVariant) o;
-
-        if (pos != that.pos) return false;
-        if (contig != null ? !contig.equals(that.contig) : that.contig != null) return false;
-        if (ref != null ? !ref.equals(that.ref) : that.ref != null) return false;
-        return alt != null ? alt.equals(that.alt) : that.alt == null;
-
+    public GenotypeType getGenotypeType() {
+        return genotypeType;
+    }
+    public List<VepAnnotationObject> getAnnotations() {
+        return annotations;
+    }
+    public Integer getCount() {
+        return count;
+    }
+    public Double getFrequency() {
+        return frequency;
     }
 
-    @Override
-    public int hashCode() {
-        int result = contig != null ? contig.hashCode() : 0;
-        result = 31 * result + (ref != null ? ref.hashCode() : 0);
-        result = 31 * result + (alt != null ? alt.hashCode() : 0);
-        result = 31 * result + pos;
-        return result;
+    public void setAnnotations(List<VepAnnotationObject> annotations) {
+        this.annotations = annotations;
     }
-
-    @Override
-    public String toString() {
-        return contig + ":" + Integer.toString(pos) + ref + ">" + alt;
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+    public void setFrequency(Double frequency) {
+        this.frequency = frequency;
     }
 }

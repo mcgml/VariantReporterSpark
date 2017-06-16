@@ -42,6 +42,13 @@ public class VCFReaderSpark {
         //filter variants for each sample
         for (String sample : vcfHeaders.getVcfHeader().getSampleNamesInOrder()){
 
+            //test
+            variants
+                    .filter(new NonVariantBySampleSparkFilter(sample))
+                    .flatMap(new MapToGenomeVariants(sample))
+                    .collect()
+                    .forEach(System.out::println);
+
             //Autosomal dominant
             WriteVariants.toTextFile(
                     variants
