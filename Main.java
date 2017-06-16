@@ -53,9 +53,13 @@ public class Main {
             onlyPrintKnownRefSeq = commandLine.hasOption("K");
             threads = commandLine.hasOption("T") ? Integer.parseInt(commandLine.getOptionValue("T")) : 1;
 
+            if (variantCallFormatFile == null){
+                throw new NullPointerException("Need to specify VCF input");
+            }
+
         } catch (ParseException | NullPointerException e){
             formatter.printHelp(PROGRAM + " " + VERSION, options);
-            LOGGER.log(Level.SEVERE, "Check args: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Check arguments: " + e.getMessage());
             System.exit(-1);
         }
 

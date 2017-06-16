@@ -20,10 +20,11 @@ public class FrameworkSparkFilterTest {
     public void areAnyAlternativeAlleleCountsLow() throws Exception {
 
         ArrayList<Integer> counts = new ArrayList<>();
-        counts.add(3,2);
+        counts.add(3);
+        counts.add(2);
 
         VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "1", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false), Allele.create("C", false)));
-        variantContextBuilder.attribute("AC",counts);
+        variantContextBuilder.attribute("AC", counts);
 
         variantContextBuilder.genotypes(
                 genotypeBuilder
@@ -50,9 +51,9 @@ public class FrameworkSparkFilterTest {
         assertEquals(true, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample2", 3));
         assertEquals(true, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample3", 2));
 
-        assertEquals(false, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample1", 4));
-        assertEquals(false, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample2", 4));
-        assertEquals(false, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample3", 3));
+        assertEquals(false, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample1", 0));
+        assertEquals(false, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample2", 2));
+        assertEquals(false, FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow(variantContextBuilder.make(), "sample3", 1));
     }
 
     @Test

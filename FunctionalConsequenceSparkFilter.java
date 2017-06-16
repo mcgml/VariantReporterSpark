@@ -56,6 +56,8 @@ public class FunctionalConsequenceSparkFilter implements Function<VariantContext
 
                 }
             }
+        } else {
+            return true;
         }
 
         return false;
