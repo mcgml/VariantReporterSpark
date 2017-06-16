@@ -20,7 +20,7 @@ public class GenomeVariant implements Serializable {
     private GenotypeType genotypeType;
     private List<VepAnnotationObject> annotations;
     private Integer count;
-    private Double frequency;
+    private Double gnomadGenome, gnomadExome;
 
     public GenomeVariant(String contig, int start, int end, String ref, String alt, GenotypeType genotypeType){
         this.contig = contig;
@@ -85,12 +85,6 @@ public class GenomeVariant implements Serializable {
     public int getEnd() {
         return end;
     }
-    public boolean isSnp(){
-        return (ref.length() == 1 && alt.length() == 1);
-    }
-    public boolean isIndel(){
-        return (ref.length() != 1 || alt.length() != 1);
-    }
     public GenotypeType getGenotypeType() {
         return genotypeType;
     }
@@ -100,17 +94,36 @@ public class GenomeVariant implements Serializable {
     public Integer getCount() {
         return count;
     }
-    public Double getFrequency() {
-        return frequency;
+    public Double getGnomadGenome() {
+        return gnomadGenome;
+    }
+    public Double getGnomadExome() {
+        return gnomadExome;
     }
 
+    public boolean isSnp(){
+        return (ref.length() == 1 && alt.length() == 1);
+    }
+    public boolean isIndel(){
+        return (ref.length() != 1 || alt.length() != 1);
+    }
+
+    public void setGnomadGenome(Double gnomadGenome) {
+        this.gnomadGenome = gnomadGenome;
+    }
+    public void setGnomadExome(Double gnomadExome) {
+        this.gnomadExome = gnomadExome;
+    }
     public void setAnnotations(List<VepAnnotationObject> annotations) {
         this.annotations = annotations;
     }
     public void setCount(Integer count) {
         this.count = count;
     }
-    public void setFrequency(Double frequency) {
-        this.frequency = frequency;
+
+    @Override
+    public String toString() {
+        return contig + ":" + start + "-" + end + ref + ">" + alt;
     }
+
 }

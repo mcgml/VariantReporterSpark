@@ -2,6 +2,7 @@ package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
+import htsjdk.variant.variantcontext.VariantContextBuilder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -98,7 +99,7 @@ public class FrameworkSparkFilter {
 
         return false;
     }
-    private static List<Double> stringListToDoubleList(List<String> strings){
+    public static List<Double> stringListToDoubleList(List<String> strings){
         ArrayList<Double> doubles = new ArrayList<>();
         for (String string : strings){
             try {

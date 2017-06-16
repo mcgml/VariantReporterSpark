@@ -45,10 +45,11 @@ public class VCFReaderSpark {
             //test
             variants
                     .filter(new NonVariantBySampleSparkFilter(sample))
-                    .flatMap(new MapToGenomeVariants(sample))
+                    .flatMap(new MapToGenomeVariants(sample, vcfHeaders.getVepHeaders()))
                     .collect()
                     .forEach(System.out::println);
 
+            /*
             //Autosomal dominant
             WriteVariants.toTextFile(
                     variants
@@ -106,7 +107,7 @@ public class VCFReaderSpark {
                     FrameworkSparkFilter.Workflow.AUTOSOMAL_RECESSIVE,
                     preferredTranscripts,
                     onlyPrintKnownRefSeq
-            );
+            );*/
 
         }
 

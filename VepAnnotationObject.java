@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
  * @since   2017-01-25
  */
 
-public class VepAnnotationObject {
+public class VepAnnotationObject implements Serializable {
     public static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static VepAnnotationObject deserialiseVepAnnotation(String[] vepHeaders, String vepFields){
