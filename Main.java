@@ -2,7 +2,6 @@ package nhs.genetics.cardiff;
 
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
-import org.broadinstitute.gatk.engine.samples.Affection;
 import org.broadinstitute.gatk.engine.samples.PedReader;
 import org.broadinstitute.gatk.engine.samples.Sample;
 import org.broadinstitute.gatk.engine.samples.SampleDB;
