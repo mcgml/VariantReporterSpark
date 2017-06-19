@@ -2,12 +2,18 @@ package nhs.genetics.cardiff;
 
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
+import org.broadinstitute.gatk.engine.samples.Affection;
+import org.broadinstitute.gatk.engine.samples.PedReader;
+import org.broadinstitute.gatk.engine.samples.Sample;
+import org.broadinstitute.gatk.engine.samples.SampleDB;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -31,8 +37,9 @@ public class Main {
 
         Integer threads = null;
         Boolean onlyPrintKnownRefSeq = null;
-        File variantCallFormatFile = null, preferredTranscriptsFile = null;
+        File variantCallFormatFile = null, preferredTranscriptsFile = null, pedFile = null;
         HashSet<String> preferredTranscripts = null;
+        List<Sample> samples = null;
 
         //parse command line
         CommandLineParser commandLineParser = new BasicParser();
@@ -41,7 +48,8 @@ public class Main {
         Options options = new Options();
 
         options.addOption("V", "Variant", true, "Path to input VCF file");
-        options.addOption("P", "PreferredTranscript", true, "Path to preferred transcript list");
+        options.addOption("F", "Features", true, "Path to preferred features list");
+        options.addOption("P", "Ped", true, "Path to PED file");
         options.addOption("K", "Known", false, "Report only known RefSeq transcripts (NM)");
         options.addOption("T", "Threads", true, "Execution threads");
 
@@ -49,12 +57,17 @@ public class Main {
             commandLine = commandLineParser.parse(options, args);
 
             variantCallFormatFile = commandLine.hasOption("V") ? new File(commandLine.getOptionValue("V")) : null;
-            preferredTranscriptsFile = commandLine.hasOption("P") ? new File(commandLine.getOptionValue("P")) : null;
+            preferredTranscriptsFile = commandLine.hasOption("F") ? new File(commandLine.getOptionValue("F")) : null;
+            pedFile = commandLine.hasOption("P") ? new File(commandLine.getOptionValue("P")) : null;
             onlyPrintKnownRefSeq = commandLine.hasOption("K");
             threads = commandLine.hasOption("T") ? Integer.parseInt(commandLine.getOptionValue("T")) : 1;
 
             if (variantCallFormatFile == null){
                 throw new NullPointerException("Need to specify VCF input");
+            }
+
+            if (pedFile == null){
+                throw new NullPointerException("Need to specify PED input");
             }
 
         } catch (ParseException | NullPointerException e){
@@ -91,9 +104,17 @@ public class Main {
             System.exit(-1);
         }
 
+        //parse PED file
+        try {
+            samples = new PedReader().parse(pedFile, EnumSet.noneOf(PedReader.MissingPedField.class), new SampleDB());
+        } catch (IOException e){
+            LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
+            System.exit(-1);
+        }
+
         //report variants
         try {
-            VCFReaderSpark.reportVariants(variantCallFormatFile, vcfHeaders, threads, preferredTranscripts, onlyPrintKnownRefSeq);
+            VCFReaderSpark.reportVariants(variantCallFormatFile, vcfHeaders, samples, threads, preferredTranscripts, onlyPrintKnownRefSeq);
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
             System.exit(-1);

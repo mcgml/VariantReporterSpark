@@ -7,10 +7,13 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
+import org.broadinstitute.gatk.engine.samples.Affection;
+import org.broadinstitute.gatk.engine.samples.Sample;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Class for reading and filtering variants
@@ -21,7 +24,7 @@ import java.util.HashSet;
 
 public class VCFReaderSpark {
 
-    public static void reportVariants(File file, VCFHeaders vcfHeaders, Integer threads, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
+    public static void reportVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
 
         SparkConf sparkConf = new SparkConf().setAppName(Main.PROGRAM).setMaster("local[" + threads + "]");
         //sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer"); // TODO production
@@ -40,75 +43,67 @@ public class VCFReaderSpark {
         variants.persist(StorageLevel.MEMORY_ONLY());
 
         //filter variants for each sample
-        for (String sample : vcfHeaders.getVcfHeader().getSampleNamesInOrder()){
+        for (Sample sample : samples){
+            if (sample.getAffection().equals(Affection.AFFECTED)) {
 
-            //test
-            variants
-                    .filter(new NonVariantBySampleSparkFilter(sample))
-                    .flatMap(new MapToGenomeVariants(sample, vcfHeaders.getVepHeaders()))
-                    .collect()
-                    .forEach(System.out::println);
+                //Autosomal dominant
+                WriteVariants.toTextFile(
+                        variants
+                                .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                                .filter(new AutosomalDominantSparkFilter(sample.getID()))
+                                .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                                .collect(),
+                        sample.getID(),
+                        vcfHeaders.getVepHeaders(),
+                        FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT,
+                        preferredTranscripts,
+                        onlyPrintKnownRefSeq
+                );
 
-            /*
-            //Autosomal dominant
-            WriteVariants.toTextFile(
-                    variants
-                    .filter(new NonVariantBySampleSparkFilter(sample))
-                    .filter(new AutosomalDominantSparkFilter(sample))
-                    .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()))
-                    .collect(),
-                    sample,
-                    vcfHeaders.getVepHeaders(),
-                    FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT,
-                    preferredTranscripts,
-                    onlyPrintKnownRefSeq
-            );
+                //X-linked Male
+                WriteVariants.toTextFile(
+                        variants
+                                .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                                .filter(new MaleXDominantSparkFilter(sample.getID()))
+                                .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                                .collect(),
+                        sample.getID(),
+                        vcfHeaders.getVepHeaders(),
+                        FrameworkSparkFilter.Workflow.MALE_X,
+                        preferredTranscripts,
+                        onlyPrintKnownRefSeq
+                );
 
-            //X-linked Male
-            WriteVariants.toTextFile(
-                    variants
-                            .filter(new NonVariantBySampleSparkFilter(sample))
-                            .filter(new MaleXDominantSparkFilter(sample))
-                            .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()))
-                            .collect(),
-                    sample,
-                    vcfHeaders.getVepHeaders(),
-                    FrameworkSparkFilter.Workflow.MALE_X,
-                    preferredTranscripts,
-                    onlyPrintKnownRefSeq
-            );
+                //X-linked female
+                WriteVariants.toTextFile(
+                        variants
+                                .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                                .filter(new FemaleXDominantSparkFilter(sample.getID()))
+                                .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                                .collect(),
+                        sample.getID(),
+                        vcfHeaders.getVepHeaders(),
+                        FrameworkSparkFilter.Workflow.FEMALE_X,
+                        preferredTranscripts,
+                        onlyPrintKnownRefSeq
+                );
 
-            //X-linked female
-            WriteVariants.toTextFile(
-                    variants
-                            .filter(new NonVariantBySampleSparkFilter(sample))
-                            .filter(new FemaleXDominantSparkFilter(sample))
-                            .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()))
-                            .collect(),
-                    sample,
-                    vcfHeaders.getVepHeaders(),
-                    FrameworkSparkFilter.Workflow.FEMALE_X,
-                    preferredTranscripts,
-                    onlyPrintKnownRefSeq
-            );
+                //autosomal recessive
+                //TODO count by gene
+                JavaRDD<VariantContext> autosomalRecessiveCandidates = variants
+                        .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                        .filter(new AutosomalRecessiveSparkFilter(sample.getID()))
+                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()));
 
-            //autosomal recessive
-            JavaRDD<VariantContext> autosomalRecessiveCandidates = variants
-                    .filter(new NonVariantBySampleSparkFilter(sample))
-                    .filter(new AutosomalRecessiveSparkFilter(sample))
-                    .filter(new FunctionalConsequenceSparkFilter(sample, vcfHeaders.getVepHeaders()));
-
-            //TODO count by gene
-
-            WriteVariants.toTextFile(
-                    autosomalRecessiveCandidates.collect(),
-                    sample,
-                    vcfHeaders.getVepHeaders(),
-                    FrameworkSparkFilter.Workflow.AUTOSOMAL_RECESSIVE,
-                    preferredTranscripts,
-                    onlyPrintKnownRefSeq
-            );*/
-
+                WriteVariants.toTextFile(
+                        autosomalRecessiveCandidates.collect(),
+                        sample.getID(),
+                        vcfHeaders.getVepHeaders(),
+                        FrameworkSparkFilter.Workflow.AUTOSOMAL_RECESSIVE,
+                        preferredTranscripts,
+                        onlyPrintKnownRefSeq
+                );
+            }
         }
 
         javaSparkContext.close();
