@@ -8,6 +8,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.storage.StorageLevel;
 import org.broadinstitute.gatk.engine.samples.Affection;
+import org.broadinstitute.gatk.engine.samples.Gender;
 import org.broadinstitute.gatk.engine.samples.Sample;
 
 import java.io.File;
@@ -61,32 +62,36 @@ public class VCFReaderSpark {
                 );
 
                 //X-linked Male
-                WriteVariants.toTextFile(
-                        variants
-                                .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                                .filter(new MaleXDominantSparkFilter(sample.getID()))
-                                .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                                .collect(),
-                        sample.getID(),
-                        vcfHeaders.getVepHeaders(),
-                        FrameworkSparkFilter.Workflow.MALE_X,
-                        preferredTranscripts,
-                        onlyPrintKnownRefSeq
-                );
+                if (sample.getGender().equals(Gender.MALE)){
+                    WriteVariants.toTextFile(
+                            variants
+                                    .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                                    .filter(new MaleXDominantSparkFilter(sample.getID()))
+                                    .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                                    .collect(),
+                            sample.getID(),
+                            vcfHeaders.getVepHeaders(),
+                            FrameworkSparkFilter.Workflow.MALE_X,
+                            preferredTranscripts,
+                            onlyPrintKnownRefSeq
+                    );
+                }
 
                 //X-linked female
-                WriteVariants.toTextFile(
-                        variants
-                                .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                                .filter(new FemaleXDominantSparkFilter(sample.getID()))
-                                .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                                .collect(),
-                        sample.getID(),
-                        vcfHeaders.getVepHeaders(),
-                        FrameworkSparkFilter.Workflow.FEMALE_X,
-                        preferredTranscripts,
-                        onlyPrintKnownRefSeq
-                );
+                if (sample.getGender().equals(Gender.FEMALE)){
+                    WriteVariants.toTextFile(
+                            variants
+                                    .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                                    .filter(new FemaleXDominantSparkFilter(sample.getID()))
+                                    .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                                    .collect(),
+                            sample.getID(),
+                            vcfHeaders.getVepHeaders(),
+                            FrameworkSparkFilter.Workflow.FEMALE_X,
+                            preferredTranscripts,
+                            onlyPrintKnownRefSeq
+                    );
+                }
 
                 //autosomal recessive
                 //TODO count by gene

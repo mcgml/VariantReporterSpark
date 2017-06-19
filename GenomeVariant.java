@@ -1,10 +1,6 @@
 package nhs.genetics.cardiff.framework;
 
-import htsjdk.variant.variantcontext.GenotypeType;
-import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
-
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * A class for chromosomal changes.
@@ -16,19 +12,13 @@ import java.util.List;
 public class GenomeVariant implements Serializable {
 
     private String contig, ref, alt;
-    private int start, end;
-    private GenotypeType genotypeType;
-    private List<VepAnnotationObject> annotations;
-    private Integer count;
-    private Double gnomadGenome, gnomadExome;
+    private int pos;
 
-    public GenomeVariant(String contig, int start, int end, String ref, String alt, GenotypeType genotypeType){
+    public GenomeVariant(String contig, int pos, String ref, String alt){
         this.contig = contig;
-        this.start = start;
-        this.end = end;
+        this.pos = pos;
         this.ref = ref;
         this.alt = alt;
-        this.genotypeType = genotypeType;
     }
 
     public void convertToMinimalRepresentation(){
@@ -60,7 +50,7 @@ public class GenomeVariant implements Serializable {
                     break;
                 }
 
-                ++i; ++j; ++start; --end;
+                ++i; ++j; ++pos;
             }
 
             ref = ref.substring(i - 1);
@@ -70,60 +60,25 @@ public class GenomeVariant implements Serializable {
 
     }
 
-    public String getContig(){
+    public String getContig() {
         return contig;
     }
-    public String getRef(){
+
+    public String getRef() {
         return ref;
     }
-    public String getAlt(){
+
+    public String getAlt() {
         return alt;
     }
-    public int getStart() {
-        return start;
-    }
-    public int getEnd() {
-        return end;
-    }
-    public GenotypeType getGenotypeType() {
-        return genotypeType;
-    }
-    public List<VepAnnotationObject> getAnnotations() {
-        return annotations;
-    }
-    public Integer getCount() {
-        return count;
-    }
-    public Double getGnomadGenome() {
-        return gnomadGenome;
-    }
-    public Double getGnomadExome() {
-        return gnomadExome;
-    }
 
-    public boolean isSnp(){
-        return (ref.length() == 1 && alt.length() == 1);
-    }
-    public boolean isIndel(){
-        return (ref.length() != 1 || alt.length() != 1);
-    }
-
-    public void setGnomadGenome(Double gnomadGenome) {
-        this.gnomadGenome = gnomadGenome;
-    }
-    public void setGnomadExome(Double gnomadExome) {
-        this.gnomadExome = gnomadExome;
-    }
-    public void setAnnotations(List<VepAnnotationObject> annotations) {
-        this.annotations = annotations;
-    }
-    public void setCount(Integer count) {
-        this.count = count;
+    public int getPos() {
+        return pos;
     }
 
     @Override
     public String toString() {
-        return contig + ":" + start + "-" + end + ref + ">" + alt;
+        return contig + ":" + pos + ref + ">" + alt;
     }
 
 }
