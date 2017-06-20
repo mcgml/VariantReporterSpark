@@ -61,6 +61,19 @@ public class FrameworkSparkFilter {
 
         return false;
     }
+    public static boolean areAnyAlternativeAlleleCountsNonZero(VariantContext variantContext){
+        List<Integer> alleleCounts = variantContext.getAttributeAsIntList("AC",0);
+
+        if (alleleCounts != null && alleleCounts.size() > 0){
+            for (int count : alleleCounts){
+                if (count > 0){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
     public static boolean areAnyAlternativeAllelesHighGnomadExomeFrequency(VariantContext variantContext, String sample, double maxAlleleFrequency){
         List<Double> alleleFrequencies = stringListToDoubleList(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Exome.AF_POPMAX","."));
 

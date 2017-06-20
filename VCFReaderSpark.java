@@ -40,7 +40,8 @@ public class VCFReaderSpark {
                     vcfCodec.setVCFHeader(vcfHeaders.getVcfHeader(), vcfHeaders.getVcfHeaderVersion());
                     return vcfCodec.decode(line);
                 })
-                .filter(VariantContext::isNotFiltered);
+                .filter(VariantContext::isNotFiltered)
+                .filter(FrameworkSparkFilter::areAnyAlternativeAlleleCountsNonZero);
         variants.persist(StorageLevel.MEMORY_ONLY());
 
         //filter variants for each sample
