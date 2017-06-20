@@ -138,38 +138,49 @@ public class FrameworkSparkFilter {
     public static final Set<String> x = new HashSet<String>() {{
         add("X");
     }};
-    public static final Set<String> retainedFunctionalConsequences = new HashSet<String>() {{
-        //add("intergenic_variant");
-        //add("intron_variant");
-        //add("upstream_gene_variant");
-        //add("downstream_gene_variant");
-        //add("5_prime_utr_variant");
-        //add("3_prime_utr_variant");
+    public static final Set<String> highFunctionalConsequence = new HashSet<String>(){{
+        //GeL HIGH
+        add("splice_donor_variant"); //0001575
+        add("splice_acceptor_variant"); //0001574
+        add("frameshift_variant"); //0001589
+        add("transcript_ablation"); //0001893
+        add("initiator_codon_variant"); //0001582
+        add("stop_gained"); //0001587
+        add("stop_lost"); //0001578
+    }};
+
+    public static final Set<String> moderateFunctionalConsequences = new HashSet<String>() {{
+        //GeL MODERATE
+        add("transcript_amplification"); //0001889
+        add("inframe_insertion"); //0001821 & 0001822
+        add("missense_variant"); //0001583 & 0001630
+        add("incomplete_terminal_codon_variant"); //0001626
+    }};
+    public static final Set<String> lowFunctionalConsequence = new HashSet<String>(){{
+        //added by ML
         add("splice_region_variant");
-        add("splice_donor_variant");
-        add("splice_acceptor_variant");
-        add("frameshift_variant");
-        add("transcript_ablation");
-        add("transcript_amplification");
-        add("inframe_insertion");
         add("inframe_deletion");
         add("synonymous_variant");
         add("stop_retained_variant");
-        add("missense_variant");
-        add("initiator_codon_variant");
-        add("stop_gained");
-        add("stop_lost");
-        //add("mature_mirna_variant");
-        //add("non_coding_exon_variant");
-        //add("nc_transcript_variant");
-        add("incomplete_terminal_codon_variant");
-        //add("nmd_transcript_variant");
-        //add("coding_sequence_variant");
         add("tfbs_ablation");
         add("tfbs_amplification");
         add("tf_binding_site_variant");
-        //add("regulatory_region_variant");
-        //add("regulatory_region_ablation");
-        //add("regulatory_region_amplification");
+    }};
+    public static final Set<String> ignoredFunctionalConsequence = new HashSet<String>(){{
+        //not used
+        add("intergenic_variant");
+        add("intron_variant");
+        add("upstream_gene_variant");
+        add("downstream_gene_variant");
+        add("5_prime_utr_variant");
+        add("3_prime_utr_variant");
+        add("mature_mirna_variant");
+        add("non_coding_exon_variant");
+        add("nc_transcript_variant");
+        add("nmd_transcript_variant");
+        add("coding_sequence_variant");
+        add("regulatory_region_variant");
+        add("regulatory_region_ablation");
+        add("regulatory_region_amplification");
     }};
 }

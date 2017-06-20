@@ -8,7 +8,8 @@ import org.apache.spark.api.java.function.Function;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.retainedFunctionalConsequences;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.highFunctionalConsequence;
+import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.moderateFunctionalConsequences;
 
 public class FunctionalConsequenceSparkFilter implements Function<VariantContext, Boolean> {
     private final String sample;
@@ -45,7 +46,7 @@ public class FunctionalConsequenceSparkFilter implements Function<VariantContext
                         if (vepAnnotationObject.getAlleleNum() == alleleNum){
 
                             for (String consequence : vepAnnotationObject.getConsequence()) {
-                                if (retainedFunctionalConsequences.contains(consequence)){
+                                if (highFunctionalConsequence.contains(consequence) || moderateFunctionalConsequences.contains(consequence)){
                                     return true;
                                 }
                             }

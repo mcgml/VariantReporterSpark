@@ -20,7 +20,7 @@ public class AutosomalDominantSparkFilter implements Function<VariantContext, Bo
                 variantContext.getGenotype(sample).isHet() &&
                 areAnyAlternativeAlleleCountsLow(variantContext, sample, 1) &&
                 !areAnyAlternativeAllelesHighGnomadExomeFrequency(variantContext, sample, 0.001) &&
-                !areAnyAlternativeAllelesHighGnomadGenomeFrequency(variantContext, sample, 0.01);
+                !areAnyAlternativeAllelesHighGnomadGenomeFrequency(variantContext, sample, 0.0075);
     }
 
 }
