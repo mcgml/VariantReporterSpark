@@ -49,52 +49,41 @@ public class Result {
     public ModeOfInheritance getModeOfInheritance() {
         return modeOfInheritance;
     }
-
     public String[] getEnsembleGeneIds() {
         return ensembleGeneIds;
     }
-
     public String[] getEvidences() {
         return evidences;
     }
-
     public String[] getPublications() {
         return publications;
     }
-
     public String getDiseaseGroup() {
         return diseaseGroup;
     }
-
     public String getLevelOfConfidence() {
         return levelOfConfidence;
     }
-
     public String getSpecificDiseaseName() {
         return specificDiseaseName;
     }
-
     public String getDiseaseSubGroup() {
         return diseaseSubGroup;
     }
-
     public String[] getModeOfPathogenicity() {
         return modeOfPathogenicity;
     }
-
     public String[] getPhenotypes() {
         return phenotypes;
     }
-
     public String getPenetrance() {
         return penetrance;
     }
-
     public Double getVersion() {
         return version;
     }
-
     public String getGeneSymbol() {
         return geneSymbol;
     }
+
 }
