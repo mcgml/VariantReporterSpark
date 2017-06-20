@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
@@ -17,9 +19,21 @@ import java.util.stream.Collectors;
  */
 
 public class VepAnnotationObject implements Serializable {
-    public static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static VepAnnotationObject deserialiseVepAnnotation(String[] vepHeaders, String vepFields){
+    public static HashSet<VepAnnotationObject> getVepAnnotationObjects(String[] vepHeaders, Object csq){
+        HashSet<VepAnnotationObject> annotations = new HashSet<>();
+        try {
+            annotations.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, (String) csq));
+        } catch (ClassCastException e) {
+            for (String field : (ArrayList<String>) csq) {
+                annotations.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, field));
+            }
+        }
+        return annotations;
+    }
+
+    private static VepAnnotationObject deserialiseVepAnnotation(String[] vepHeaders, String vepFields){
         HashMap<String, String> hashMap = new HashMap<String, String>();
 
         //split annotation fields
@@ -617,7 +631,6 @@ public class VepAnnotationObject implements Serializable {
         if (motifPos != null ? !motifPos.equals(that.motifPos) : that.motifPos != null) return false;
         if (highInfPos != null ? !highInfPos.equals(that.highInfPos) : that.highInfPos != null) return false;
         return motifScoreChange != null ? motifScoreChange.equals(that.motifScoreChange) : that.motifScoreChange == null;
-
     }
 
     @Override

@@ -44,18 +44,7 @@ public class WriteVariants {
                 Genotype genotype = variantContext.getGenotype(sample);
 
                 //split site level annotations and pair with headers
-                HashSet<VepAnnotationObject> annotations = new HashSet<>();
-                if (variantContext.hasAttribute("CSQ")) {
-
-                    try {
-                        annotations.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, (String) variantContext.getAttribute("CSQ")));
-                    } catch (ClassCastException e) {
-                        for (String field : (ArrayList<String>) variantContext.getAttribute("CSQ")) {
-                            annotations.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, field));
-                        }
-                    }
-
-                }
+                HashSet<VepAnnotationObject> annotations = VepAnnotationObject.getVepAnnotationObjects(vepHeaders, variantContext.getAttribute("CSQ"));
 
                 //loop over alternative alleles
                 for (Allele allele : genotype.getAlleles()){

@@ -22,18 +22,11 @@ public class FunctionalConsequenceSparkFilter implements Function<VariantContext
 
     @Override
     public Boolean call(VariantContext variantContext) {
-        HashSet<VepAnnotationObject> vepAnnotationObjects = new HashSet<>();
 
         if (variantContext.hasAttribute("CSQ")){
 
-            //map vep
-            try {
-                vepAnnotationObjects.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, (String) variantContext.getAttribute("CSQ")));
-            } catch (ClassCastException e) {
-                for (String field : (ArrayList<String>) variantContext.getAttribute("CSQ")) {
-                    vepAnnotationObjects.add(VepAnnotationObject.deserialiseVepAnnotation(vepHeaders, field));
-                }
-            }
+            //map Vep
+            HashSet<VepAnnotationObject> vepAnnotationObjects = VepAnnotationObject.getVepAnnotationObjects(vepHeaders, variantContext.getAttribute("CSQ"));
 
             //check all alleles for pathogenicity
             for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
