@@ -1,6 +1,5 @@
 package nhs.genetics.cardiff;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -13,6 +12,8 @@ import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class WriteVariants {
 
     private static final Logger LOGGER = Logger.getLogger(WriteVariants.class.getName());
+    private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyHH:mm:ss");
 
     public static void toTextFile(List<VariantContext> variants, String sample, String[] vepHeaders, FrameworkSparkFilter.Workflow workflow, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
         LOGGER.log(Level.INFO, "Writing " + sample + " from workflow " + workflow.toString() + " with " + variants.size() + " variants");
@@ -38,7 +40,8 @@ public class WriteVariants {
         try (PrintWriter printWriter = new PrintWriter(sample + "_" + workflow.toString() + "_VariantReport.txt")){
 
             //print headers
-            printWriter.println("VariantId\tGenotype\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseGroup\tDiseaseSubGroup\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
+            printWriter.println("#" + Main.PROGRAM + " v" + Main.VERSION + " (" + dateFormat.format(new Date()) + ")");
+            printWriter.println("#VariantId\tGenotype\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseGroup\tDiseaseSubGroup\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
 
             //loop over writable variants alleles for this patient
             for (VariantContext variantContext : variants){
