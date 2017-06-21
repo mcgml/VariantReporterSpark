@@ -94,7 +94,7 @@ public class VCFReaderSpark {
                     );
                 }
 
-                //autosomal recessive
+                /*autosomal recessive
                 //TODO count by gene
                 JavaRDD<VariantContext> autosomalRecessiveCandidates = variants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
@@ -108,7 +108,7 @@ public class VCFReaderSpark {
                         FrameworkSparkFilter.Workflow.AUTOSOMAL_RECESSIVE,
                         preferredTranscripts,
                         onlyPrintKnownRefSeq
-                );
+                );*/
             }
         }
 

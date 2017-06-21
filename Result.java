@@ -1,6 +1,6 @@
 package nhs.genetics.cardiff.framework.panelapp;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by ml on 20/06/2017.
@@ -84,6 +84,11 @@ public class Result {
     }
     public String getGeneSymbol() {
         return geneSymbol;
+    }
+
+    @Override
+    public String toString(){
+        return geneSymbol + "\t" + modeOfInheritance + "\t" + diseaseGroup + "\t" + diseaseSubGroup + "\t" + specificDiseaseName;
     }
 
 }

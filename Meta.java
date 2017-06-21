@@ -1,6 +1,6 @@
 package nhs.genetics.cardiff.framework.panelapp;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by ml on 20/06/2017.

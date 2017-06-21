@@ -1,18 +1,19 @@
 package nhs.genetics.cardiff;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.VariantContext;
 import nhs.genetics.cardiff.framework.GenomeVariant;
+import nhs.genetics.cardiff.framework.panelapp.ModeOfInheritance;
+import nhs.genetics.cardiff.framework.panelapp.PanelAppRestClient;
+import nhs.genetics.cardiff.framework.panelapp.Result;
 import nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter;
 import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -29,13 +30,15 @@ public class WriteVariants {
     private static final Logger LOGGER = Logger.getLogger(WriteVariants.class.getName());
 
     public static void toTextFile(List<VariantContext> variants, String sample, String[] vepHeaders, FrameworkSparkFilter.Workflow workflow, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
-
         LOGGER.log(Level.INFO, "Writing " + sample + " from workflow " + workflow.toString() + " with " + variants.size() + " variants");
+
+        //store panelapp results
+        HashMap<String, Result[]> panelAppResults = new HashMap<>();
 
         try (PrintWriter printWriter = new PrintWriter(sample + "_" + workflow.toString() + "_VariantReport.txt")){
 
             //print headers
-            printWriter.println("VariantId\tGenotype\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
+            printWriter.println("VariantId\tGenotype\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseGroup\tDiseaseSubGroup\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
 
             //loop over writable variants alleles for this patient
             for (VariantContext variantContext : variants){
@@ -60,6 +63,16 @@ public class WriteVariants {
                             if (vepAnnotationObject.getAlleleNum() == alleleNum){
                                 if (!vepAnnotationObject.getFeature().startsWith("NM") && onlyPrintKnownRefSeq) continue;
 
+                                //contact panelApp for annotations
+                                if (!panelAppResults.containsKey(vepAnnotationObject.getSymbol())){
+                                    try {
+                                        LOGGER.info("Connecting to panelApp: " + vepAnnotationObject.getSymbol());
+                                        panelAppResults.put(vepAnnotationObject.getSymbol(), PanelAppRestClient.searchByGene(vepAnnotationObject.getSymbol()).getResults());
+                                    } catch (IOException e){
+                                        LOGGER.warning("Could not connect to PanelApp: " + e.getMessage() + " continuing without annotations.");
+                                    }
+                                }
+
                                 //print variant annotations
                                 printWriter.print(genomeVariant);printWriter.print("\t");
                                 printWriter.print(genotype.getType()); printWriter.print("\t");
@@ -79,6 +92,60 @@ public class WriteVariants {
 
                                 //transcript level annotations
                                 if (vepAnnotationObject.getSymbol() != null) printWriter.print(vepAnnotationObject.getSymbol()); printWriter.print("\t");
+
+                                //print panelApp annotations
+                                if (panelAppResults.containsKey(vepAnnotationObject.getSymbol())) {
+
+                                    //print mode of inheritance for this gene
+                                    printWriter.print(
+                                            Arrays.stream(PanelAppRestClient.searchByGene(vepAnnotationObject.getSymbol()).getResults())
+                                                    .map(Result::getModeOfInheritance)
+                                                    .filter(modeOfInheritance -> modeOfInheritance != ModeOfInheritance.UNKNOWN)
+                                                    .filter(p -> p != null)
+                                                    .map(ModeOfInheritance::toString)
+                                                    .distinct()
+                                                    .collect(Collectors.joining("|"))
+                                    );
+                                    printWriter.print("\t");
+
+                                    //print disease group
+                                    printWriter.print(
+                                            Arrays.stream(PanelAppRestClient.searchByGene(vepAnnotationObject.getSymbol()).getResults())
+                                                    .map(Result::getSpecificDiseaseName)
+                                                    .filter(p -> p != null)
+                                                    .distinct()
+                                                    .collect(Collectors.joining("|"))
+                                    );
+                                    printWriter.print("\t");
+
+                                    //print disease subgroup
+                                    printWriter.print(
+                                            Arrays.stream(PanelAppRestClient.searchByGene(vepAnnotationObject.getSymbol()).getResults())
+                                                    .map(Result::getSpecificDiseaseName)
+                                                    .filter(p -> p != null)
+                                                    .distinct()
+                                                    .collect(Collectors.joining("|"))
+                                    );
+                                    printWriter.print("\t");
+
+                                    //print disease name
+                                    printWriter.print(
+                                            Arrays.stream(PanelAppRestClient.searchByGene(vepAnnotationObject.getSymbol()).getResults())
+                                                    .map(Result::getSpecificDiseaseName)
+                                                    .filter(p -> p != null)
+                                                    .distinct()
+                                                    .collect(Collectors.joining("|"))
+                                    );
+                                    printWriter.print("\t");
+
+
+                                } else {
+                                    printWriter.print("\t");
+                                    printWriter.print("\t");
+                                    printWriter.print("\t");
+                                    printWriter.print("\t");
+                                }
+
                                 if (vepAnnotationObject.getFeature() != null) printWriter.print(vepAnnotationObject.getFeature()); printWriter.print("\t");
                                 if (preferredTranscripts != null && preferredTranscripts.contains(vepAnnotationObject.getFeature())) printWriter.print(true); else printWriter.print(false); printWriter.print("\t");
                                 if (vepAnnotationObject.getHgvsc() != null) printWriter.print(vepAnnotationObject.getHgvsc()); printWriter.print("\t");
