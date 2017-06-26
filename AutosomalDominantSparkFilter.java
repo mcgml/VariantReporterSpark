@@ -1,26 +1,32 @@
-package nhs.genetics.cardiff.framework.spark.filter;
+package nhs.genetics.cardiff.framework.spark.filter.gel;
 
+import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
 import org.apache.spark.api.java.function.Function;
 
-import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAlleleCountsLow;
-import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadExomeFrequency;
-import static nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter.areAnyAlternativeAllelesHighGnomadGenomeFrequency;
-
 public class AutosomalDominantSparkFilter implements Function<VariantContext, Boolean> {
-    private final String sample;
+    private String sample;
 
+    /**
+     * Identifies rare autosomal heterozgous variants
+     * @param sample
+     */
     public AutosomalDominantSparkFilter(String sample){
         this.sample = sample;
     }
 
     @Override
     public Boolean call(VariantContext variantContext) {
-        return FrameworkSparkFilter.autosomes.contains(variantContext.getContig()) &&
+        return GelFilterFramework.autosomes.contains(variantContext.getContig()) &&
                 variantContext.getGenotype(sample).isHet() &&
-                areAnyAlternativeAlleleCountsLow(variantContext, sample, 1) &&
-                !areAnyAlternativeAllelesHighGnomadExomeFrequency(variantContext, sample, 0.001) &&
-                !areAnyAlternativeAllelesHighGnomadGenomeFrequency(variantContext, sample, 0.0075);
+                variantContext.getGenotype(sample).getAlleles()
+                        .stream()
+                        .filter(Allele::isNonReference)
+                        .filter(allele -> GelFilterFramework.getCohortAlternativeAlleleCount(variantContext, allele) < 4)
+                        .filter(allele -> GelFilterFramework.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) <= 0.001)
+                        .filter(allele -> GelFilterFramework.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) <= 0.075)
+                        .count() > 0;
     }
 
 }
+

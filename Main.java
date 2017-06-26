@@ -49,7 +49,7 @@ public class Main {
         options.addOption("V", "Variant", true, "Path to input VCF file");
         options.addOption("F", "Features", true, "Path to preferred features list");
         options.addOption("P", "Ped", true, "Path to PED file");
-        options.addOption("K", "Known", false, "Report only known RefSeq transcripts (NM)");
+        options.addOption("N", "NM", false, "Report only known RefSeq transcripts (NM)");
         options.addOption("T", "Threads", true, "Execution threads");
 
         try {
@@ -58,7 +58,7 @@ public class Main {
             variantCallFormatFile = commandLine.hasOption("V") ? new File(commandLine.getOptionValue("V")) : null;
             preferredTranscriptsFile = commandLine.hasOption("F") ? new File(commandLine.getOptionValue("F")) : null;
             pedFile = commandLine.hasOption("P") ? new File(commandLine.getOptionValue("P")) : null;
-            onlyPrintKnownRefSeq = commandLine.hasOption("K");
+            onlyPrintKnownRefSeq = commandLine.hasOption("N");
             threads = commandLine.hasOption("T") ? Integer.parseInt(commandLine.getOptionValue("T")) : 1;
 
             if (variantCallFormatFile == null){

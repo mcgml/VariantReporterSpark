@@ -32,7 +32,7 @@ public class Result {
     private String diseaseSubGroup;
 
     @JsonProperty("ModeOfPathogenicity")
-    private String[] modeOfPathogenicity;
+    private String modeOfPathogenicity;
 
     @JsonProperty("Phenotypes")
     private String[] phenotypes;
@@ -70,7 +70,7 @@ public class Result {
     public String getDiseaseSubGroup() {
         return diseaseSubGroup;
     }
-    public String[] getModeOfPathogenicity() {
+    public String getModeOfPathogenicity() {
         return modeOfPathogenicity;
     }
     public String[] getPhenotypes() {
