@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Created by ml on 22/06/2017.
  */
-public class GelFilterFramework {
+public class FrameworkSparkFilter {
 
     public enum Workflow {
         AUTOSOMAL_DOMINANT,

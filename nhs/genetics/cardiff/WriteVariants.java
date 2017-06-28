@@ -7,7 +7,7 @@ import nhs.genetics.cardiff.framework.GenomeVariant;
 import nhs.genetics.cardiff.framework.panelapp.ModeOfInheritance;
 import nhs.genetics.cardiff.framework.panelapp.PanelAppRestClient;
 import nhs.genetics.cardiff.framework.panelapp.Result;
-import nhs.genetics.cardiff.framework.spark.filter.gel.GelFilterFramework;
+import nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter;
 import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class WriteVariants {
     private static final Logger LOGGER = Logger.getLogger(WriteVariants.class.getName());
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyHH:mm:ss");
 
-    public static void toTextFile(List<VariantContext> variants, String sample, String[] vepHeaders, GelFilterFramework.Workflow workflow, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
+    public static void toTextFile(List<VariantContext> variants, String sample, String[] vepHeaders, FrameworkSparkFilter.Workflow workflow, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
         LOGGER.log(Level.INFO, "Writing " + sample + " from workflow " + workflow.toString() + " with " + variants.size() + " variants");
 
         //store panelapp results
@@ -57,7 +57,7 @@ public class WriteVariants {
                     if (allele.isNonReference() && !allele.getBaseString().equals("*")){
 
                         boolean printed = false;
-                        int alleleNum = GelFilterFramework.getVepAlleleNumIndex(variantContext, allele);
+                        int alleleNum = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
 
                         GenomeVariant genomeVariant = new GenomeVariant(variantContext.getContig(), variantContext.getStart(), variantContext.getReference().getBaseString(), allele.getBaseString());
                         genomeVariant.convertToMinimalRepresentation();

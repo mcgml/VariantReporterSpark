@@ -19,27 +19,27 @@ public class DeNovoSparkFilter implements Function<VariantContext, Boolean> {
     @Override
     public Boolean call(VariantContext variantContext) {
 
-        if (GelFilterFramework.autosomes.contains(variantContext.getContig())){
+        if (FrameworkSparkFilter.autosomes.contains(variantContext.getContig())){
             return variantContext.getGenotype(sample).isHet() &&
                     variantContext.getGenotype(father).isHomRef() &&
                     variantContext.getGenotype(mother).isHomRef() &&
                     variantContext.getGenotype(sample).getAlleles()
                             .stream()
                             .filter(Allele::isNonReference)
-                            .filter(allele -> GelFilterFramework.getCohortAlternativeAlleleCount(variantContext, allele) < 4)
-                            .filter(allele -> GelFilterFramework.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) <= 0.001)
-                            .filter(allele -> GelFilterFramework.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) <= 0.075)
+                            .filter(allele -> FrameworkSparkFilter.getCohortAlternativeAlleleCount(variantContext, allele) < 4)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) <= 0.001)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) <= 0.075)
                             .count() > 0;
-        } else if (GelFilterFramework.x.contains(variantContext.getContig())){
+        } else if (FrameworkSparkFilter.x.contains(variantContext.getContig())){
             return (gender == Gender.MALE && variantContext.getGenotype(sample).isHomVar()) || (gender == Gender.FEMALE && variantContext.getGenotype(sample).isHet()) &&
                     variantContext.getGenotype(father).isHomRef() &&
                     variantContext.getGenotype(mother).isHomRef() &&
                     variantContext.getGenotype(sample).getAlleles()
                             .stream()
                             .filter(Allele::isNonReference)
-                            .filter(allele -> GelFilterFramework.getCohortAlternativeAlleleCount(variantContext, allele) < 4)
-                            .filter(allele -> GelFilterFramework.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) <= 0.001)
-                            .filter(allele -> GelFilterFramework.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) <= 0.075)
+                            .filter(allele -> FrameworkSparkFilter.getCohortAlternativeAlleleCount(variantContext, allele) < 4)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) <= 0.001)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) <= 0.075)
                             .count() > 0;
         }
 

@@ -25,14 +25,14 @@ public class FunctionalConsequenceSparkFilter implements Function<VariantContext
             for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
                 if (allele.isNonReference()){
 
-                    int alleleNum = GelFilterFramework.getVepAlleleNumIndex(variantContext, allele);
+                    int alleleNum = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
 
                     //check variant consequences for pathogenicity
                     for (VepAnnotationObject vepAnnotationObject : vepAnnotationObjects){
                         if (vepAnnotationObject.getAlleleNum() == alleleNum){
 
                             for (String consequence : vepAnnotationObject.getConsequence()) {
-                                if (GelFilterFramework.functionalCodingImpact.contains(consequence)){
+                                if (FrameworkSparkFilter.functionalCodingImpact.contains(consequence)){
                                     return true;
                                 }
                             }
