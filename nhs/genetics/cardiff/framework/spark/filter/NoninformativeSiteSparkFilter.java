@@ -8,7 +8,6 @@ public class NoninformativeSiteSparkFilter implements Function<VariantContext, B
     @Override
     public Boolean call(VariantContext variantContext) {
         return variantContext.isNotFiltered() &&
-                (FrameworkSparkFilter.x.contains(variantContext.getContig()) || FrameworkSparkFilter.autosomes.contains(variantContext.getContig())) &&
                 variantContext.hasAttribute("CSQ") &&
                 FrameworkSparkFilter.getMaxAlleleCount(variantContext) > 0 &&
                 FrameworkSparkFilter.getMinGnomadExomeAlleleFrequency(variantContext) <= 0.01 &&
