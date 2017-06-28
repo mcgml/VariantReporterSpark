@@ -58,7 +58,7 @@ public class VCFReaderSpark {
                             .filter(new NonVariantBySampleSparkFilter(sample.getID()))
                             .filter(new DeNovoSparkFilter(sample.getID(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                            .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DENOVO, preferredTranscripts, onlyPrintKnownRefSeq);
+                            .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DE_NOVO, preferredTranscripts, onlyPrintKnownRefSeq);
 
                     //UPD
                     WriteVariants.toTextFile(variants
@@ -73,9 +73,9 @@ public class VCFReaderSpark {
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
                         .filter(new DominantSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
+                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
 
-                /*//collect compound het candidates
+                //collect compound het candidates
                 JavaRDD<VariantContext> candidateCompoundHets = variants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
                         .filter(new CompoundHeterozygousSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
@@ -93,12 +93,10 @@ public class VCFReaderSpark {
                 //simple recessive
                 WriteVariants.toTextFile(variants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                        .filter(new SimpleRecessiveSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
+                        .filter(new RecessiveSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.SIMPLE_RECESSIVE, preferredTranscripts, onlyPrintKnownRefSeq);
+                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.RECESSIVE, preferredTranscripts, onlyPrintKnownRefSeq);
 
-
-                        */
 
             }
         }

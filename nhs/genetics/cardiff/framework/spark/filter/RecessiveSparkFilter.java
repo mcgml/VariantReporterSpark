@@ -5,7 +5,7 @@ import htsjdk.variant.variantcontext.VariantContext;
 import org.apache.spark.api.java.function.Function;
 import org.broadinstitute.gatk.engine.samples.Gender;
 
-public class SimpleRecessiveSparkFilter implements Function<VariantContext, Boolean> {
+public class RecessiveSparkFilter implements Function<VariantContext, Boolean> {
     private String sample, father, mother;
     private Gender gender;
 
@@ -14,7 +14,7 @@ public class SimpleRecessiveSparkFilter implements Function<VariantContext, Bool
      * @param sample
      * @param gender
      */
-    public SimpleRecessiveSparkFilter(String sample, Gender gender){
+    public RecessiveSparkFilter(String sample, Gender gender){
         this.sample = sample;
         this.gender = gender;
     }
@@ -24,7 +24,7 @@ public class SimpleRecessiveSparkFilter implements Function<VariantContext, Bool
      * @param sample
      * @param gender
      */
-    public SimpleRecessiveSparkFilter(String sample, Gender gender, String father, String mother){
+    public RecessiveSparkFilter(String sample, Gender gender, String father, String mother){
         this.sample = sample;
         this.gender = gender;
         this.father = father;

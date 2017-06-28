@@ -2,7 +2,6 @@ package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
-import org.fusesource.leveldbjni.All;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -14,10 +13,10 @@ import java.util.Set;
 public class FrameworkSparkFilter {
 
     public enum Workflow {
-        AUTOSOMAL_DOMINANT,
+        DOMINANT,
         COMPOUND_HETEROZYGOUS,
-        DENOVO,
-        SIMPLE_RECESSIVE,
+        DE_NOVO,
+        RECESSIVE,
         UNIPARENTAL_ISODISOMY
     }
 
