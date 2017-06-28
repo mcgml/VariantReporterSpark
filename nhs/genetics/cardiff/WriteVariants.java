@@ -41,7 +41,7 @@ public class WriteVariants {
 
             //print headers
             printWriter.println("#" + Main.PROGRAM + " v" + Main.VERSION + " (" + dateFormat.format(new Date()) + ")");
-            printWriter.println("#VariantId\tGenotype\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseGroup\tDiseaseSubGroup\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
+            printWriter.println("#VariantId\tGenotype\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
 
             //loop over writable variants alleles for this patient
             for (VariantContext variantContext : variants){
@@ -96,10 +96,8 @@ public class WriteVariants {
                                 //transcript level annotations
                                 if (vepAnnotationObject.getSymbol() != null) printWriter.print(vepAnnotationObject.getSymbol()); printWriter.print("\t");
 
-                                //print panelApp annotations
+                                //print mode of inheritance for this gene
                                 if (panelAppResults.containsKey(vepAnnotationObject.getSymbol())) {
-
-                                    //print mode of inheritance for this gene
                                     printWriter.print(
                                             Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
                                                     .map(Result::getModeOfInheritance)
@@ -109,45 +107,20 @@ public class WriteVariants {
                                                     .distinct()
                                                     .collect(Collectors.joining("|"))
                                     );
-                                    printWriter.print("\t");
-
-                                    //print disease group
-                                    printWriter.print(
-                                            Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
-                                                    .map(Result::getSpecificDiseaseName)
-                                                    .filter(p -> p != null)
-                                                    .distinct()
-                                                    .collect(Collectors.joining("|"))
-                                    );
-                                    printWriter.print("\t");
-
-                                    //print disease subgroup
-                                    printWriter.print(
-                                            Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
-                                                    .map(Result::getSpecificDiseaseName)
-                                                    .filter(p -> p != null)
-                                                    .distinct()
-                                                    .collect(Collectors.joining("|"))
-                                    );
-                                    printWriter.print("\t");
-
-                                    //print disease name
-                                    printWriter.print(
-                                            Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
-                                                    .map(Result::getSpecificDiseaseName)
-                                                    .filter(p -> p != null)
-                                                    .distinct()
-                                                    .collect(Collectors.joining("|"))
-                                    );
-                                    printWriter.print("\t");
-
-
-                                } else {
-                                    printWriter.print("\t");
-                                    printWriter.print("\t");
-                                    printWriter.print("\t");
-                                    printWriter.print("\t");
                                 }
+                                printWriter.print("\t");
+
+                                //print disease  name
+                                if (panelAppResults.containsKey(vepAnnotationObject.getSymbol())) {
+                                    printWriter.print(
+                                            Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
+                                                    .map(Result::getSpecificDiseaseName)
+                                                    .filter(p -> p != null)
+                                                    .distinct()
+                                                    .collect(Collectors.joining("|"))
+                                    );
+                                }
+                                printWriter.print("\t");
 
                                 if (vepAnnotationObject.getFeature() != null) printWriter.print(vepAnnotationObject.getFeature()); printWriter.print("\t");
                                 if (preferredTranscripts != null && preferredTranscripts.contains(vepAnnotationObject.getFeature())) printWriter.print(true); else printWriter.print(false); printWriter.print("\t");
