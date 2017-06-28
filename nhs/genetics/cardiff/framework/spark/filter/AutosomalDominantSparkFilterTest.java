@@ -15,7 +15,7 @@ public class AutosomalDominantSparkFilterTest {
     private final static GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
 
     @Test
-    public void call() throws Exception {
+    public void pass() throws Exception {
 
         //variant 1 -- include
         VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "1", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));

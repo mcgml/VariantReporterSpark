@@ -18,9 +18,7 @@ public class FrameworkSparkFilter {
         COMPOUND_HETEROZYGOUS,
         DENOVO,
         SIMPLE_RECESSIVE,
-        UNIPARENTAL_ISODISOMY,
-        XLINKED_COMPOUND_HETEROZYGOUS,
-        XLINKED_SIMPLE_RECESSIVE
+        UNIPARENTAL_ISODISOMY
     }
 
     /**

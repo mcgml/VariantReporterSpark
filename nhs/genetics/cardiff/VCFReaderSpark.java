@@ -13,6 +13,7 @@ import org.broadinstitute.gatk.engine.samples.Sample;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Class for reading and filtering variants
@@ -22,6 +23,8 @@ import java.util.*;
  */
 
 public class VCFReaderSpark {
+    private static final Logger LOGGER = Logger.getLogger(VCFReaderSpark.class.getName());
+
     public static void reportVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
 
         SparkConf sparkConf = new SparkConf().setAppName(Main.PROGRAM).setMaster("local[" + threads + "]");
@@ -40,20 +43,21 @@ public class VCFReaderSpark {
                 .filter(new NonInformativeSiteSparkFilter());
         variants.persist(StorageLevel.MEMORY_ONLY());
 
-        for (Sample sample : samples){
+        LOGGER.info("Identified " + variants.count() + " informative sites.");
+
+        /*for (Sample sample : samples){
             if (sample.getAffection() == Affection.AFFECTED){
 
+                LOGGER.info("Filtering " + sample);
 
                 if (sample.getMother() != null && sample.getFather() != null){
 
-
-                    //DeNovo
+                    //de novo
                     WriteVariants.toTextFile(variants
                             .filter(new NonVariantBySampleSparkFilter(sample.getID()))
                             .filter(new DeNovoSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                             .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DENOVO, preferredTranscripts, onlyPrintKnownRefSeq);
-
 
                     //UPD
                     WriteVariants.toTextFile(variants
@@ -62,7 +66,6 @@ public class VCFReaderSpark {
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                             .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY, preferredTranscripts, onlyPrintKnownRefSeq);
                 }
-
 
                 //collect compound het candidates
                 JavaRDD<VariantContext> candidateCompoundHets = variants
@@ -94,7 +97,7 @@ public class VCFReaderSpark {
                         .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
 
             }
-        }
+        }*/
 
         javaSparkContext.close();
     }

@@ -6,6 +6,7 @@ import htsjdk.variant.vcf.VCFHeaderVersion;
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 
 import java.io.*;
+import java.util.logging.Logger;
 
 /**
  * Class for extracting VCF headers
@@ -15,6 +16,8 @@ import java.io.*;
  */
 
 public class VCFHeaders implements Serializable {
+
+    private static final Logger LOGGER = Logger.getLogger(VCFHeaders.class.getName());
 
     private File file;
     private VCFHeader vcfHeader;
