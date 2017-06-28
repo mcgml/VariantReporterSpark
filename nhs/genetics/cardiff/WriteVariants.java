@@ -55,8 +55,6 @@ public class WriteVariants {
                 //loop over alternative alleles
                 for (Allele allele : genotype.getAlleles()){
                     if (allele.isNonReference() && !allele.getBaseString().equals("*")){
-
-                        boolean printed = false;
                         int alleleNum = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
 
                         GenomeVariant genomeVariant = new GenomeVariant(variantContext.getContig(), variantContext.getStart(), variantContext.getReference().getBaseString(), allele.getBaseString());
@@ -134,29 +132,7 @@ public class WriteVariants {
                                 if (vepAnnotationObject.getPolyphen() != null) printWriter.print(vepAnnotationObject.getPolyphen());
 
                                 printWriter.println();
-                                printed = true;
                             }
-                        }
-
-                        if (!printed){
-                            //print variant annotations
-                            printWriter.print(genomeVariant);printWriter.print("\t");
-                            printWriter.print(genotype.getType()); printWriter.print("\t");
-                            printWriter.print(genotype); printWriter.print("\t");
-
-                            //dbSNP, cosmic etc
-                            printWriter.print("\t");
-                            printWriter.print("\t");
-                            printWriter.print("\t");
-
-                            //exome
-                            if (variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Exome.AF_POPMAX",".").size() > 0) printWriter.print(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Exome.AF_POPMAX",".").get(variantContext.getAlleleIndex(allele) - 1));
-                            printWriter.print("\t");
-
-                            //genome
-                            if (variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Genome_chr" + variantContext.getContig() + ".AF_POPMAX",".").size() > 0) printWriter.print(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Genome_chr" + variantContext.getContig() + ".AF_POPMAX",".").get(variantContext.getAlleleIndex(allele) - 1));
-
-                            printWriter.println();
                         }
 
                     }
