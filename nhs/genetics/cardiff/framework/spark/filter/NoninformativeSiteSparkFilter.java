@@ -3,7 +3,7 @@ package nhs.genetics.cardiff.framework.spark.filter;
 import htsjdk.variant.variantcontext.VariantContext;
 import org.apache.spark.api.java.function.Function;
 
-public class NoninformativeSiteSparkFilter implements Function<VariantContext, Boolean> {
+public class NonInformativeSiteSparkFilter implements Function<VariantContext, Boolean> {
 
     @Override
     public Boolean call(VariantContext variantContext) {

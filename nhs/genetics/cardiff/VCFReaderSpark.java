@@ -37,7 +37,7 @@ public class VCFReaderSpark {
                     vcfCodec.setVCFHeader(vcfHeaders.getVcfHeader(), vcfHeaders.getVcfHeaderVersion());
                     return vcfCodec.decode(line);
                 })
-                .filter(new NoninformativeSiteSparkFilter());
+                .filter(new NonInformativeSiteSparkFilter());
         variants.persist(StorageLevel.MEMORY_ONLY());
 
         for (Sample sample : samples){
