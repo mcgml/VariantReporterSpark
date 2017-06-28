@@ -2,14 +2,14 @@ package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
+import org.fusesource.leveldbjni.All;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by ml on 22/06/2017.
+ * functions for assisting variant filtering
  */
 public class FrameworkSparkFilter {
 
@@ -59,25 +59,19 @@ public class FrameworkSparkFilter {
     }
 
     /**
+     * checks if any alternative allele(s) are low population frequency
      * @param variantContext
-     * @return min allele frequency for all alternative alleles (genome)
+     * @param maxAlleleFrequency
+     * @return true = any low, false = all high
      */
-    public static Double getMinGnomadGenomeAlleleFrequency(VariantContext variantContext){
-        return variantContext.getAlternateAlleles()
-                .stream()
-                .map(allele -> getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele))
-                .reduce(0.0, (a, b) -> Double.min(a, b));
-    }
-
-    /**
-     * @param variantContext
-     * @return min allele frequency for all alternative alleles (exome)
-     */
-    public static Double getMinGnomadExomeAlleleFrequency(VariantContext variantContext){
-        return variantContext.getAlternateAlleles()
-                .stream()
-                .map(allele -> getGnomadExomeAlternativeAlleleFrequency(variantContext, allele))
-                .reduce(0.0, (a, b) -> Double.min(a, b));
+    public static boolean areAnyAlternativeAllelesLowFrequency(VariantContext variantContext, double maxAlleleFrequency){
+        for (Allele allele : variantContext.getAlternateAlleles()){
+            if (getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) <= maxAlleleFrequency &&
+                    getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) <= maxAlleleFrequency){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -146,6 +140,11 @@ public class FrameworkSparkFilter {
 
     }
 
+    /**
+     * filters map<String, Long> for >1 gene occurrence
+     * @param counts
+     * @return
+     */
     public static HashSet<String> getVariantsWithMultipleGeneHits(Map<String, Long> counts){
         HashSet<String> hits = new HashSet<>();
         for (Map.Entry<String, Long> hit : counts.entrySet()){
