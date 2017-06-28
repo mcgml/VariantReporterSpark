@@ -93,7 +93,7 @@ public class VCFReaderSpark {
                 //simple recessive
                 WriteVariants.toTextFile(variants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                        .filter(new RecessiveSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
+                        .filter(new RecessiveSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                         .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.RECESSIVE, preferredTranscripts, onlyPrintKnownRefSeq);
 
