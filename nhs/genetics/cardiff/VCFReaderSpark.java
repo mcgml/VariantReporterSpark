@@ -45,7 +45,7 @@ public class VCFReaderSpark {
 
         LOGGER.info("Identified " + variants.count() + " informative sites.");
 
-        /*for (Sample sample : samples){
+        for (Sample sample : samples){
             if (sample.getAffection() == Affection.AFFECTED){
 
                 LOGGER.info("Filtering " + sample);
@@ -67,7 +67,7 @@ public class VCFReaderSpark {
                             .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY, preferredTranscripts, onlyPrintKnownRefSeq);
                 }
 
-                //collect compound het candidates
+                /*//collect compound het candidates
                 JavaRDD<VariantContext> candidateCompoundHets = variants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
                         .filter(new CompoundHeterozygousSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
@@ -94,10 +94,10 @@ public class VCFReaderSpark {
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
                         .filter(new AutosomalDominantSparkFilter(sample.getID()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
+                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);*/
 
             }
-        }*/
+        }
 
         javaSparkContext.close();
     }

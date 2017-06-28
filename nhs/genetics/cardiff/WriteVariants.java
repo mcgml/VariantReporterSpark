@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 public class WriteVariants {
 
     private static final Logger LOGGER = Logger.getLogger(WriteVariants.class.getName());
-    private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyHH:mm:ss");
+    private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 
     public static void toTextFile(List<VariantContext> variants, String sample, String[] vepHeaders, FrameworkSparkFilter.Workflow workflow, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
         LOGGER.log(Level.INFO, "Writing " + sample + " from workflow " + workflow.toString() + " with " + variants.size() + " variants");
@@ -77,7 +77,7 @@ public class WriteVariants {
                                 //print variant annotations
                                 printWriter.print(genomeVariant);printWriter.print("\t");
                                 printWriter.print(genotype.getType()); printWriter.print("\t");
-                                printWriter.print(genotype); printWriter.print("\t");
+                                printWriter.print(genotype.getGenotypeString()); printWriter.print("\t");
 
                                 //dbSNP, cosmic etc
                                 printWriter.print(vepAnnotationObject.getDbSnpIds()); printWriter.print("\t");
