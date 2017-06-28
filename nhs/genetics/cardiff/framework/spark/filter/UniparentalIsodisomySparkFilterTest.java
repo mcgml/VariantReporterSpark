@@ -115,6 +115,31 @@ public class UniparentalIsodisomySparkFilterTest {
         assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Gender.FEMALE, "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
+    public void passXFemalePaternal() throws Exception {
+
+        GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
+
+        VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "X", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
+        variantContextBuilder.unfiltered();
+
+        variantContextBuilder.genotypes(
+                genotypeBuilder.name("sample")
+                        .alleles(Arrays.asList(Allele.create("T", false), Allele.create("T", false)))
+                        .unfiltered()
+                        .make(),
+                genotypeBuilder.name("father")
+                        .alleles(Arrays.asList(Allele.create("T", false), Allele.create("T", false)))
+                        .unfiltered()
+                        .make(),
+                genotypeBuilder.name("mother")
+                        .alleles(Arrays.asList(Allele.create("A", true), Allele.create("A", true)))
+                        .unfiltered()
+                        .make()
+        );
+
+        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Gender.FEMALE, "father", "mother").call(variantContextBuilder.make()));
+    }
+    @Test
     public void failXMale() throws Exception {
 
         GenotypeBuilder genotypeBuilder = new GenotypeBuilder();

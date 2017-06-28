@@ -67,6 +67,13 @@ public class VCFReaderSpark {
                             .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY, preferredTranscripts, onlyPrintKnownRefSeq);
                 }
 
+                //dominant
+                WriteVariants.toTextFile(variants
+                        .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                        .filter(new AutosomalDominantSparkFilter(sample.getID()))
+                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
+
                 /*//collect compound het candidates
                 JavaRDD<VariantContext> candidateCompoundHets = variants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
@@ -89,12 +96,8 @@ public class VCFReaderSpark {
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                         .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.SIMPLE_RECESSIVE, preferredTranscripts, onlyPrintKnownRefSeq);
 
-                //autosomal dominant
-                WriteVariants.toTextFile(variants
-                        .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                        .filter(new AutosomalDominantSparkFilter(sample.getID()))
-                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);*/
+
+                        */
 
             }
         }
