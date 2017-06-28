@@ -55,7 +55,7 @@ public class VCFReaderSpark {
                     //de novo
                     WriteVariants.toTextFile(variants
                             .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                            .filter(new DeNovoSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
+                            .filter(new DeNovoSparkFilter(sample.getID(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                             .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DENOVO, preferredTranscripts, onlyPrintKnownRefSeq);
 

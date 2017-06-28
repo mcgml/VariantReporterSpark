@@ -3,7 +3,6 @@ package nhs.genetics.cardiff.framework.spark.filter;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.GenotypeBuilder;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.gatk.engine.samples.Gender;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class DeNovoSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new DeNovoSparkFilter("sample", Gender.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(true, new DeNovoSparkFilter("sample", "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void passXMale() throws Exception {
@@ -63,7 +62,7 @@ public class DeNovoSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new DeNovoSparkFilter("sample", Gender.MALE, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(true, new DeNovoSparkFilter("sample", "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void passXFemale() throws Exception {
@@ -88,7 +87,7 @@ public class DeNovoSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new DeNovoSparkFilter("sample", Gender.FEMALE, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(true, new DeNovoSparkFilter("sample", "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void highAc() throws Exception {
@@ -114,7 +113,7 @@ public class DeNovoSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new DeNovoSparkFilter("sample", Gender.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(false, new DeNovoSparkFilter("sample", "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void highGenomeAf() throws Exception {
@@ -142,7 +141,7 @@ public class DeNovoSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new DeNovoSparkFilter("sample", Gender.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(false, new DeNovoSparkFilter("sample", "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void highExomeAf() throws Exception {
@@ -170,6 +169,6 @@ public class DeNovoSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new DeNovoSparkFilter("sample", Gender.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(false, new DeNovoSparkFilter("sample","father", "mother").call(variantContextBuilder.make()));
     }
 }
