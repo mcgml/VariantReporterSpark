@@ -50,6 +50,7 @@ public class VCFReaderSpark {
 
                 LOGGER.info("Filtering " + sample);
 
+                //requires parental samples
                 if (sample.getMother() != null && sample.getFather() != null){
 
                     //de novo
@@ -70,7 +71,7 @@ public class VCFReaderSpark {
                 //dominant
                 WriteVariants.toTextFile(variants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                        .filter(new AutosomalDominantSparkFilter(sample.getID()))
+                        .filter(new DominantSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                         .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.AUTOSOMAL_DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
 
