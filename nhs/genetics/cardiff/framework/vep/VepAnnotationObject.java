@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 /**
- * Custom deserializer for Jackson & vep record
+ * POJO for VEP annotation
  *
  * @author  Matthew Lyon
  * @since   2017-01-25

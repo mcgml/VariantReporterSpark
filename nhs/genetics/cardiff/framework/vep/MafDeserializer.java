@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Custom Jackson deserializer for VEP output
+ */
 public class MafDeserializer extends StdDeserializer<HashMap<String, Double>> {
 
     private static final Logger log = Logger.getLogger(MafDeserializer.class.getName());

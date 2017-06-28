@@ -41,7 +41,7 @@ public class WriteVariants {
 
             //print headers
             printWriter.println("#" + Main.PROGRAM + " v" + Main.VERSION + " (" + dateFormat.format(new Date()) + ")");
-            printWriter.println("#VariantId\tGenotype\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
+            printWriter.println("#VariantId\tGenotype\tAlleles\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
 
             //loop over writable variants alleles for this patient
             for (VariantContext variantContext : variants){
@@ -79,6 +79,7 @@ public class WriteVariants {
                                 //print variant annotations
                                 printWriter.print(genomeVariant);printWriter.print("\t");
                                 printWriter.print(genotype.getType()); printWriter.print("\t");
+                                printWriter.print(genotype); printWriter.print("\t");
 
                                 //dbSNP, cosmic etc
                                 printWriter.print(vepAnnotationObject.getDbSnpIds()); printWriter.print("\t");
@@ -141,6 +142,7 @@ public class WriteVariants {
                             //print variant annotations
                             printWriter.print(genomeVariant);printWriter.print("\t");
                             printWriter.print(genotype.getType()); printWriter.print("\t");
+                            printWriter.print(genotype); printWriter.print("\t");
 
                             //dbSNP, cosmic etc
                             printWriter.print("\t");

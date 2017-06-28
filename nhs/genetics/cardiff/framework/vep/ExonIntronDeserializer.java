@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
 
+/**
+ * Custom Jackson deserializer for VEP output
+ */
 public class ExonIntronDeserializer extends StdDeserializer<String> {
 
     public ExonIntronDeserializer() {

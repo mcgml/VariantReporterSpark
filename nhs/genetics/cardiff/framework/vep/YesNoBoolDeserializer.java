@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
 
+/**
+ * Custom Jackson deserializer for VEP output
+ */
 public class YesNoBoolDeserializer extends StdDeserializer<Boolean> {
 
     public YesNoBoolDeserializer() {

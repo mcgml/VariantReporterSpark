@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Created by ml on 20/06/2017.
+ * REST client for PanelApp
  */
 public class PanelAppRestClient {
     private static final ObjectMapper objectMapper = new ObjectMapper();
