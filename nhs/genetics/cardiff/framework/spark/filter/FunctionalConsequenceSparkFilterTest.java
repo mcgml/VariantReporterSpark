@@ -52,11 +52,11 @@ public class FunctionalConsequenceSparkFilterTest {
 
         variantContextBuilder.attribute("CSQ", new ArrayList<>(Arrays.asList(vep.split(","))));
 
-        assertEquals(false, new FunctionalConsequenceSparkFilter("sample1", split).call(variantContextBuilder.make()));
-        assertEquals(true, new FunctionalConsequenceSparkFilter("sample2", split).call(variantContextBuilder.make()));
-        assertEquals(true, new FunctionalConsequenceSparkFilter("sample3", split).call(variantContextBuilder.make()));
-        assertEquals(false, new FunctionalConsequenceSparkFilter("sample4", split).call(variantContextBuilder.make()));
-        assertEquals(false, new FunctionalConsequenceSparkFilter("sample5", split).call(variantContextBuilder.make()));
+        assertEquals(false, new FunctionalCodingImpactSparkFilter("sample1", split).call(variantContextBuilder.make()));
+        assertEquals(true, new FunctionalCodingImpactSparkFilter("sample2", split).call(variantContextBuilder.make()));
+        assertEquals(true, new FunctionalCodingImpactSparkFilter("sample3", split).call(variantContextBuilder.make()));
+        assertEquals(false, new FunctionalCodingImpactSparkFilter("sample4", split).call(variantContextBuilder.make()));
+        assertEquals(false, new FunctionalCodingImpactSparkFilter("sample5", split).call(variantContextBuilder.make()));
 
     }
 

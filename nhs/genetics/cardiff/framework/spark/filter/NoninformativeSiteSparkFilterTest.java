@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by ml on 16/06/2017.
  */
-public class NonVariantBySampleSparkFilterTest {
+public class NoninformativeSiteSparkFilterTest {
 
     private final static ArrayList<Genotype> genotypes = new ArrayList<>();
     private final static GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
@@ -62,16 +62,16 @@ public class NonVariantBySampleSparkFilterTest {
         VariantContext variantContext = variantContextBuilder.make();
 
         //check results
-        NonVariantBySampleSparkFilter nonVariantBySampleSparkFilter1 = new NonVariantBySampleSparkFilter("sample1");
+        NoninformativeSiteSparkFilter nonVariantBySampleSparkFilter1 = new NoninformativeSiteSparkFilter();
         assertEquals(true, nonVariantBySampleSparkFilter1.call(variantContext));
 
-        NonVariantBySampleSparkFilter nonVariantBySampleSparkFilter2 = new NonVariantBySampleSparkFilter("sample2");
+        NoninformativeSiteSparkFilter nonVariantBySampleSparkFilter2 = new NoninformativeSiteSparkFilter();
         assertEquals(false, nonVariantBySampleSparkFilter2.call(variantContext));
 
-        NonVariantBySampleSparkFilter nonVariantBySampleSparkFilter3 = new NonVariantBySampleSparkFilter("sample3");
+        NoninformativeSiteSparkFilter nonVariantBySampleSparkFilter3 = new NoninformativeSiteSparkFilter();
         assertEquals(false, nonVariantBySampleSparkFilter3.call(variantContext));
-        
-        NonVariantBySampleSparkFilter nonVariantBySampleSparkFilter4 = new NonVariantBySampleSparkFilter("sample4");
+
+        NoninformativeSiteSparkFilter nonVariantBySampleSparkFilter4 = new NoninformativeSiteSparkFilter();
         assertEquals(false, nonVariantBySampleSparkFilter4.call(variantContext));
 
     }

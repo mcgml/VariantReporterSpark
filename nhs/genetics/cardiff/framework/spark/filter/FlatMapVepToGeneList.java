@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.framework.spark.filter.gel;
+package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.VariantContext;
 import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;

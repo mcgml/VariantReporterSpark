@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.framework.spark.filter.gel;
+package nhs.genetics.cardiff.framework.spark.filter;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
@@ -7,11 +7,11 @@ import org.apache.spark.api.java.function.Function;
 
 import java.util.HashSet;
 
-public class FunctionalCodingImpactSparkFilter implements Function<VariantContext, Boolean> {
+public class FunctionalConsequenceSparkFilter implements Function<VariantContext, Boolean> {
     private String sample;
     private String[] vepHeaders;
 
-    public FunctionalCodingImpactSparkFilter(String sample, String[] vepHeaders){
+    public FunctionalConsequenceSparkFilter(String sample, String[] vepHeaders){
         this.sample = sample;
         this.vepHeaders = vepHeaders;
     }
