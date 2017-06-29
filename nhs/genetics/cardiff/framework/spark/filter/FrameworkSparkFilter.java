@@ -51,7 +51,7 @@ public class FrameworkSparkFilter {
      * @param variantContext
      * @return maximum allele count for all alternative alleles
      */
-    public static Integer getMaxAlleleCount(VariantContext variantContext){
+    public static int getMaxAlleleCount(VariantContext variantContext){
         return variantContext.getAttributeAsIntList("AC", 0).stream().reduce(Integer.MIN_VALUE, (a, b) -> Integer.max(a, b));
     }
 
@@ -76,7 +76,7 @@ public class FrameworkSparkFilter {
      * @param alternativeAllele
      * @return variant allele frequency for an allele from Gnomad genome project
      */
-    public static Double getGnomadGenomeAlternativeAlleleFrequency(VariantContext variantContext, Allele alternativeAllele) {
+    public static double getGnomadGenomeAlternativeAlleleFrequency(VariantContext variantContext, Allele alternativeAllele) {
 
         if (alternativeAllele.isReference()){
             return 0.0;
@@ -99,7 +99,7 @@ public class FrameworkSparkFilter {
      * @param alternativeAllele
      * @return variant allele frequency for an allele from Gnomad exome project
      */
-    public static Double getGnomadExomeAlternativeAlleleFrequency(VariantContext variantContext, Allele alternativeAllele) {
+    public static double getGnomadExomeAlternativeAlleleFrequency(VariantContext variantContext, Allele alternativeAllele) {
 
         if (alternativeAllele.isReference()){
             return 0.0;
