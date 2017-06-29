@@ -33,7 +33,7 @@ public class VCFReaderSpark {
         JavaSparkContext javaSparkContext = new JavaSparkContext(sparkConf);
 
         //load variants and persist informative variants
-        JavaRDD<VariantContext> variants = javaSparkContext.textFile(file.toString())
+        JavaRDD<VariantContext> informativeVariants = javaSparkContext.textFile(file.toString())
                 .filter(line -> !line.startsWith("#"))
                 .map(line -> {
                     final VCFCodec vcfCodec = new VCFCodec();
@@ -41,44 +41,53 @@ public class VCFReaderSpark {
                     return vcfCodec.decode(line);
                 })
                 .filter(new NonInformativeSiteSparkFilter());
-        variants.persist(StorageLevel.MEMORY_ONLY());
+        informativeVariants.persist(StorageLevel.MEMORY_ONLY());
 
-        LOGGER.info("Identified " + variants.count() + " informative sites.");
+        LOGGER.info("Identified " + informativeVariants.count() + " informative sites.");
 
         for (Sample sample : samples){
             if (sample.getAffection() == Affection.AFFECTED){
 
-                LOGGER.info("Filtering " + sample);
+                LOGGER.info("Filtering " + sample.getID());
+
+                JavaRDD<VariantContext> informativeGenotypes = informativeVariants
+                        .filter(new NonVariantBySampleSparkFilter(sample.getID()));
+                informativeGenotypes.persist(StorageLevel.MEMORY_ONLY());
+
+                LOGGER.info("Found " + informativeGenotypes.count() + " informative genotypes.");
 
                 //requires parental samples
                 if (sample.getMother() != null && sample.getFather() != null){
 
                     //de novo
-                    WriteVariants.toTextFile(variants
-                            .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                    WriteVariants.toTextFile(informativeGenotypes
                             .filter(new DeNovoSparkFilter(sample.getID(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                             .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DE_NOVO, preferredTranscripts, onlyPrintKnownRefSeq);
 
                     //UPD
-                    WriteVariants.toTextFile(variants
-                            .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                    WriteVariants.toTextFile(informativeGenotypes
                             .filter(new UniparentalIsodisomySparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                             .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY, preferredTranscripts, onlyPrintKnownRefSeq);
+
                 }
 
+                //recessive
+                WriteVariants.toTextFile(informativeGenotypes
+                        .filter(new RecessiveSparkFilter(sample.getID(), sample.getGender()))
+                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.RECESSIVE, preferredTranscripts, onlyPrintKnownRefSeq);
+
                 //dominant
-                WriteVariants.toTextFile(variants
-                        .filter(new NonVariantBySampleSparkFilter(sample.getID()))
+                WriteVariants.toTextFile(informativeGenotypes
                         .filter(new DominantSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                         .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
 
-                //collect compound het candidates
-                JavaRDD<VariantContext> candidateCompoundHets = variants
-                        .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                        .filter(new CompoundHeterozygousSparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
+                //compound het candidates
+                JavaRDD<VariantContext> candidateCompoundHets = informativeGenotypes
+                        .filter(new CompoundHeterozygousSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()));
                 candidateCompoundHets.persist(StorageLevel.MEMORY_ONLY());
 
@@ -89,13 +98,6 @@ public class VCFReaderSpark {
                                 ), vcfHeaders.getVepHeaders())).collect(),
                         sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS,preferredTranscripts, onlyPrintKnownRefSeq
                 );
-
-                //simple recessive
-                WriteVariants.toTextFile(variants
-                        .filter(new NonVariantBySampleSparkFilter(sample.getID()))
-                        .filter(new RecessiveSparkFilter(sample.getID(), sample.getGender()))
-                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.RECESSIVE, preferredTranscripts, onlyPrintKnownRefSeq);
 
 
             }

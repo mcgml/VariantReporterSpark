@@ -32,11 +32,11 @@ public class DominantSparkFilter implements Function<VariantContext, Boolean> {
                             .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.0075)
                             .count() > 0;
         } else if (FrameworkSparkFilter.x.contains(variantContext.getContig()) && gender == Gender.MALE){
-            return variantContext.getGenotype(sample).isHom() &&
+            return variantContext.getGenotype(sample).isHomVar() &&
                     variantContext.getGenotype(sample).getAlleles()
                             .stream()
                             .filter(Allele::isNonReference)
-                            .filter(allele -> FrameworkSparkFilter.getCohortAlternativeAlleleCount(variantContext, allele) < 5)
+                            .filter(allele -> FrameworkSparkFilter.getCohortAlternativeAlleleCount(variantContext, allele) < 6)
                             .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) < 0.001)
                             .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.0075)
                             .count() > 0;
