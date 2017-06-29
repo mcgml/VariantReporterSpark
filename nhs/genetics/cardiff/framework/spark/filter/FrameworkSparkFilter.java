@@ -212,4 +212,11 @@ public class FrameworkSparkFilter {
         add("X");
     }};
 
+    /**
+     * Y chromosome
+     */
+    public static final Set<String> y = new HashSet<String>() {{
+        add("Y");
+    }};
+
 }

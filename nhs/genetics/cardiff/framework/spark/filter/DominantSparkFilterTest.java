@@ -69,6 +69,24 @@ public class DominantSparkFilterTest {
         assertEquals(true, new DominantSparkFilter("sample", Gender.MALE).call(variantContextBuilder.make()));
     }
     @Test
+    public void passYMaleHemiDom() throws Exception {
+
+        GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
+
+        VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "Y", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
+        variantContextBuilder.attribute("AC", new int[]{1});
+        variantContextBuilder.unfiltered();
+
+        variantContextBuilder.genotypes(
+                genotypeBuilder.name("sample")
+                        .alleles(Arrays.asList(Allele.create("T", false), Allele.create("T", false)))
+                        .unfiltered()
+                        .make()
+        );
+
+        assertEquals(true, new DominantSparkFilter("sample", Gender.MALE).call(variantContextBuilder.make()));
+    }
+    @Test
     public void failHom() throws Exception {
 
         GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
