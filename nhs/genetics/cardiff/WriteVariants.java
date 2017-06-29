@@ -55,13 +55,14 @@ public class WriteVariants {
                 //loop over alternative alleles
                 for (Allele allele : genotype.getAlleles()){
                     if (allele.isNonReference() && !allele.getBaseString().equals("*")){
-                        int alleleNum = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
+
+                        int vepIndex = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
 
                         GenomeVariant genomeVariant = new GenomeVariant(variantContext.getContig(), variantContext.getStart(), variantContext.getReference().getBaseString(), allele.getBaseString());
                         genomeVariant.convertToMinimalRepresentation();
 
                         for (VepAnnotationObject vepAnnotationObject : annotations){
-                            if (vepAnnotationObject.getAlleleNum() == alleleNum){
+                            if (vepAnnotationObject.getAlleleNum() == vepIndex){
                                 if (!vepAnnotationObject.getFeature().startsWith("NM") && onlyPrintKnownRefSeq) continue;
 
                                 //contact panelApp for annotations
@@ -87,11 +88,11 @@ public class WriteVariants {
                                 printWriter.print(vepAnnotationObject.getHGMDIds()); printWriter.print("\t");
 
                                 //exome
-                                if (variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Exome.AF_POPMAX",".").size() > 0) printWriter.print(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Exome.AF_POPMAX",".").get(variantContext.getAlleleIndex(allele) - 1));
+                                printWriter.print(FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele));
                                 printWriter.print("\t");
 
                                 //genome
-                                if (variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Genome_chr" + variantContext.getContig() + ".AF_POPMAX",".").size() > 0) printWriter.print(variantContext.getAttributeAsStringList("GNOMAD_2.0.1_Genome_chr" + variantContext.getContig() + ".AF_POPMAX",".").get(variantContext.getAlleleIndex(allele) - 1));
+                                printWriter.print(FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele));
                                 printWriter.print("\t");
 
                                 //transcript level annotations
