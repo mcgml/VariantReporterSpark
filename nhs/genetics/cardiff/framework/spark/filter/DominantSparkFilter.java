@@ -29,7 +29,7 @@ public class DominantSparkFilter implements Function<VariantContext, Boolean> {
                             .filter(Allele::isNonReference)
                             .filter(allele -> FrameworkSparkFilter.getCohortAlternativeAlleleCount(variantContext, allele) < 4)
                             .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) < 0.001)
-                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.075)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.0075)
                             .count() > 0;
         } else if (FrameworkSparkFilter.x.contains(variantContext.getContig()) && gender == Gender.MALE){
             return variantContext.getGenotype(sample).isHom() &&
@@ -38,7 +38,7 @@ public class DominantSparkFilter implements Function<VariantContext, Boolean> {
                             .filter(Allele::isNonReference)
                             .filter(allele -> FrameworkSparkFilter.getCohortAlternativeAlleleCount(variantContext, allele) < 5)
                             .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) < 0.001)
-                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.075)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.0075)
                             .count() > 0;
         }
 

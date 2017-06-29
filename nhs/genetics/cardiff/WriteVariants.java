@@ -41,7 +41,7 @@ public class WriteVariants {
 
             //print headers
             printWriter.println("#" + Main.PROGRAM + " v" + Main.VERSION + " (" + dateFormat.format(new Date()) + ")");
-            printWriter.println("#VariantId\tGenotype\tAlleles\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
+            printWriter.println("#SampleId\tWorkflow\tVariantId\tGenotype\tAlleles\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
 
             //loop over writable variants alleles for this patient
             for (VariantContext variantContext : variants){
@@ -75,6 +75,8 @@ public class WriteVariants {
                                 }
 
                                 //print variant annotations
+                                printWriter.print(sample);printWriter.print("\t");
+                                printWriter.print(workflow);printWriter.print("\t");
                                 printWriter.print(genomeVariant);printWriter.print("\t");
                                 printWriter.print(genotype.getType()); printWriter.print("\t");
                                 printWriter.print(genotype.getGenotypeString()); printWriter.print("\t");

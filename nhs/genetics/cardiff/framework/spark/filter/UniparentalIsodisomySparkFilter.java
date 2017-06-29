@@ -26,7 +26,7 @@ public class UniparentalIsodisomySparkFilter implements Function<VariantContext,
                             .stream()
                             .filter(Allele::isNonReference)
                             .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) < 0.01)
-                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.075)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.01)
                             .count() > 0;
         } else if (FrameworkSparkFilter.x.contains(variantContext.getContig()) && gender == Gender.FEMALE){
             return variantContext.getGenotype(sample).isHomVar() &&
@@ -35,7 +35,7 @@ public class UniparentalIsodisomySparkFilter implements Function<VariantContext,
                             .stream()
                             .filter(Allele::isNonReference)
                             .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) < 0.01)
-                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.075)
+                            .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.01)
                             .count() > 0;
         }
 
