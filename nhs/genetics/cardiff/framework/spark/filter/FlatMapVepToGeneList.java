@@ -24,7 +24,9 @@ public class FlatMapVepToGeneList implements FlatMapFunction<VariantContext, Str
         if (variantContext.hasAttribute("CSQ")){
             HashSet<VepAnnotationObject> vepAnnotationObjects = VepAnnotationObject.getVepAnnotationObjects(vepHeaders, variantContext.getAttribute("CSQ"));
             for (VepAnnotationObject vepAnnotationObject : vepAnnotationObjects){
-                genes.add(vepAnnotationObject.getSymbol());
+                if (vepAnnotationObject.getSymbol() != null){
+                    genes.add(vepAnnotationObject.getSymbol());
+                }
             }
         }
 
