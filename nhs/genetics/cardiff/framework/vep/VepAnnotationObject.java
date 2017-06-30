@@ -132,6 +132,10 @@ public class VepAnnotationObject implements Serializable {
     @JsonDeserialize(using = StringDeserializer.class)
     private String variantClass;
 
+    @JsonProperty("MINIMISED")
+    @JsonDeserialize(using = OneBlankBoolDeserializer.class)
+    private Boolean minimised;
+
     @JsonProperty("SYMBOL_SOURCE")
     @JsonDeserialize(using = StringDeserializer.class)
     private String symbolSource;
@@ -554,6 +558,9 @@ public class VepAnnotationObject implements Serializable {
     public String getMotifScoreChange() {
         return motifScoreChange;
     }
+    public Boolean getMinimised() {
+        return minimised;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -588,6 +595,7 @@ public class VepAnnotationObject implements Serializable {
         if (strand != null ? !strand.equals(that.strand) : that.strand != null) return false;
         if (flags != null ? !flags.equals(that.flags) : that.flags != null) return false;
         if (variantClass != null ? !variantClass.equals(that.variantClass) : that.variantClass != null) return false;
+        if (minimised != null ? !minimised.equals(that.minimised) : that.minimised != null) return false;
         if (symbolSource != null ? !symbolSource.equals(that.symbolSource) : that.symbolSource != null) return false;
         if (hgncId != null ? !hgncId.equals(that.hgncId) : that.hgncId != null) return false;
         if (canonical != null ? !canonical.equals(that.canonical) : that.canonical != null) return false;
@@ -658,6 +666,7 @@ public class VepAnnotationObject implements Serializable {
         result = 31 * result + (strand != null ? strand.hashCode() : 0);
         result = 31 * result + (flags != null ? flags.hashCode() : 0);
         result = 31 * result + (variantClass != null ? variantClass.hashCode() : 0);
+        result = 31 * result + (minimised != null ? minimised.hashCode() : 0);
         result = 31 * result + (symbolSource != null ? symbolSource.hashCode() : 0);
         result = 31 * result + (hgncId != null ? hgncId.hashCode() : 0);
         result = 31 * result + (canonical != null ? canonical.hashCode() : 0);
