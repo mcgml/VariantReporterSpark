@@ -29,11 +29,10 @@ public class OneBlankBoolDeserializer extends StdDeserializer<Boolean> {
 
         String value = jsonNode.asText().trim();
 
-        if (value.equals("1")){
-            return true;
-        } else{
-            return false;
+        if (value.isEmpty()) {
+            return null;
         }
 
+        return value.equals("1");
     }
 }
