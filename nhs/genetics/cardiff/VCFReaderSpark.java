@@ -75,7 +75,7 @@ public class VCFReaderSpark {
 
                 //recessive
                 WriteVariants.toTextFile(informativeGenotypes
-                        .filter(new RecessiveSparkFilter(sample.getID(), sample.getGender()))
+                        .filter(new HomozygousSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
                         .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.RECESSIVE, preferredTranscripts, onlyPrintKnownRefSeq);
 
