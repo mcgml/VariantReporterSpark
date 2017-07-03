@@ -16,7 +16,7 @@ public class FrameworkSparkFilter {
         DOMINANT,
         COMPOUND_HETEROZYGOUS,
         DE_NOVO,
-        RECESSIVE,
+        HOMOZYGOUS,
         UNIPARENTAL_ISODISOMY
     }
 
