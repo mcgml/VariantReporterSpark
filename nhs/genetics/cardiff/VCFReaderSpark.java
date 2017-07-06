@@ -63,27 +63,27 @@ public class VCFReaderSpark {
                     WriteVariants.toTextFile(informativeGenotypes
                             .filter(new DeNovoSparkFilter(sample.getID(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                            .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DE_NOVO, preferredTranscripts, onlyPrintKnownRefSeq);
+                            .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DE_NOVO, preferredTranscripts, onlyPrintKnownRefSeq);
 
                     //UPD
                     WriteVariants.toTextFile(informativeGenotypes
                             .filter(new UniparentalIsodisomySparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                            .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY, preferredTranscripts, onlyPrintKnownRefSeq);
+                            .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY, preferredTranscripts, onlyPrintKnownRefSeq);
 
                 }
 
-                //recessive
+                //homozygous
                 WriteVariants.toTextFile(informativeGenotypes
                         .filter(new HomozygousSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.HOMOZYGOUS, preferredTranscripts, onlyPrintKnownRefSeq);
+                        .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.HOMOZYGOUS, preferredTranscripts, onlyPrintKnownRefSeq);
 
                 //dominant
                 WriteVariants.toTextFile(informativeGenotypes
                         .filter(new DominantSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
+                        .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
 
                 //compound het candidates
                 JavaRDD<VariantContext> candidateCompoundHets = informativeGenotypes
@@ -96,7 +96,7 @@ public class VCFReaderSpark {
                                 .filter(new GeneSparkFilter(FrameworkSparkFilter.getVariantsWithMultipleGeneHits(
                                         candidateCompoundHets.flatMap(new FlatMapVepToGeneList(vcfHeaders.getVepHeaders())).countByValue()
                                 ), vcfHeaders.getVepHeaders())).collect(),
-                        sample.getID(), vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS,preferredTranscripts, onlyPrintKnownRefSeq
+                        sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS,preferredTranscripts, onlyPrintKnownRefSeq
                 );
 
 
