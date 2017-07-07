@@ -39,6 +39,7 @@ public class Main {
         File variantCallFormatFile = null, preferredTranscriptsFile = null, pedFile = null;
         HashSet<String> preferredTranscripts = null;
         List<Sample> samples = null;
+        String hgmdUsername = null, hgmdPassword = null;
 
         //parse command line
         CommandLineParser commandLineParser = new BasicParser();
@@ -51,6 +52,8 @@ public class Main {
         options.addOption("P", "Ped", true, "Path to PED file");
         options.addOption("N", "NM", false, "Report only known RefSeq transcripts (NM)");
         options.addOption("T", "Threads", true, "Execution threads");
+        options.addOption("Hu", "HGMDUser", true, "HGMD credentials");
+        options.addOption("Hp", "HGMDPass", true, "HGMD credentials");
 
         try {
             commandLine = commandLineParser.parse(options, args);
@@ -60,6 +63,8 @@ public class Main {
             pedFile = commandLine.hasOption("P") ? new File(commandLine.getOptionValue("P")) : null;
             onlyPrintKnownRefSeq = commandLine.hasOption("N");
             threads = commandLine.hasOption("T") ? Integer.parseInt(commandLine.getOptionValue("T")) : 1;
+            hgmdUsername = commandLine.hasOption("Hu") ? commandLine.getOptionValue("Hu") : null;
+            hgmdPassword = commandLine.hasOption("Hp") ? commandLine.getOptionValue("Hp") : null;
 
             if (variantCallFormatFile == null){
                 throw new NullPointerException("Need to specify VCF input");
