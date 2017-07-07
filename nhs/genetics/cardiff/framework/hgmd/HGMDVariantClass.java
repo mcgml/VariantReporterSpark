@@ -1,7 +1,5 @@
 package nhs.genetics.cardiff.framework.hgmd;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Enum for HGMD variant class
  */

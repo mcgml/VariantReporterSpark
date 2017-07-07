@@ -3,6 +3,8 @@ package nhs.genetics.cardiff.framework.hgmd;
 import org.jsoup.Jsoup;
 import org.junit.Test;
 
+import java.util.UnknownFormatConversionException;
+
 import static org.junit.Assert.*;
 
 /**
@@ -39,7 +41,7 @@ public class HGMDClientTest {
             "<a class='sidebar' href='http://www.qiagenbioinformatics.com/products/human-gene-mutation-database/' target='Support' onclick=\"trackOutboundLink('http://www.qiagenbioinformatics.com/products/human-gene-mutation-database/'); return false;\">Support</a> |\n" +
             "<a class='sidebar' href='start.php'>Home</a> <a class='sidebar' href='/cgi-bin/portal/logout.cgi'>Logout</a><br></div></div><div class='content'><h3 class='heading2'>batch search result for 1 terms using <span class='green'><i>hg19 VCF</i></span> (DM, DM?, DP, DFP or FP)</h3><div style='text-align:center;'><span style='float:center;'>page 1</span></div><table class='scrolltop'>\n" +
             "<tr style='word-wrap:break-word;'><th class='result' style='width:2.5%;'>#</th><th class='result' style='width:17.5%;'>Search term</th><th class='result' style='width:10%;'>Gene symbol</th><th class='result' style='width:12.5%;'>HGMD mutation</th><th class='result' style='width:15%;'>HGVS</th>\n" +
-            "<th class='result' style='width:10%;'>hg38 coordinate</th><th class='result' style='width:7.5%;'>Variant class</th><th class='result' style='width:12.5%;'>dbSNP identifier</th><th class='result' style='width:12.5%;'>HGMD accession</th></tr></table><div class='scrolling'><table class='scrolling'><tr class='odd' style='word-wrap:break-word;'><td style='width:2.5%;'>1</td><td style='width:17.5%;'>2 675623 IDH1 T C</td><td class='center' style='width:10%;'><a href='gene.php?gene=TMEM18'>TMEM18</a></td>\n" +
+            "<th class='result' style='width:10%;'>hg38 coordinate</th><th class='result' style='width:7.5%;'>Variant class</th><th class='result' style='width:12.5%;'>dbSNP identifier</th><th class='result' style='width:12.5%;'>HGMD accession</th></tr></table><div class='scrolling'><table class='scrolling'><tr class='odd' style='word-wrap:break-word;'><td style='width:2.5%;'>1</td><td style='width:17.5%;'>2 675623 ID1 T C</td><td class='center' style='width:10%;'><a href='gene.php?gene=TMEM18'>TMEM18</a></td>\n" +
             "<td class='center' style='width:12.5%;'>Asp22Gly</td><td style='width:15%;'>c.65A>G</td><td style='width:10%;'>chr2:675623</td><td class='center' style='width:7.5%;'><span class='dmq' title='Disease causing mutation ?'>DM?</span></td>\n" +
             "<td style='width:12.5%;'>N/A</td><td class='center' style='width:11.5%;'><form action='mut.php' method='GET'><input type='hidden' name='acc' value='CM1310957'><input type='submit' value='CM1310957'></form></td></tr>\n" +
             "</table></div><p><hr><div class='bott2'>\n" +
@@ -50,8 +52,34 @@ public class HGMDClientTest {
     @Test
     public void parseDocument() throws Exception {
         assertEquals(HGMDClient.parseDocument(Jsoup.parse(html)).get(0), new HGMDBatchSearchResult(
-                1,"2 675623 IDH1 T C", "TMEM18", "Asp22Gly", "c.65A>G", "chr2:675623", HGMDVariantClass.DISEASE_CAUSING_MUTATION_QUERY, null, "CM1310957"
+                1,"2 675623 ID1 T C", "TMEM18", "Asp22Gly", "c.65A>G", "chr2:675623", HGMDVariantClass.DISEASE_CAUSING_MUTATION_QUERY, null, "CM1310957"
         ));
     }
+
+    @Test
+    public void convertDMClassificationToEnum() throws Exception {
+        assertEquals(HGMDClient.convertClassificationToEnum("DM"), HGMDVariantClass.DISEASE_CAUSING_MUTATION);
+    }
+
+    @Test
+    public void convertDMQClassificationToEnum() throws Exception {
+        assertEquals(HGMDClient.convertClassificationToEnum("DM?"), HGMDVariantClass.DISEASE_CAUSING_MUTATION_QUERY);
+    }
+
+    @Test
+    public void convertDPClassificationToEnum() throws Exception {
+        assertEquals(HGMDClient.convertClassificationToEnum("DP"), HGMDVariantClass.DISEASE_ASSOCIATED_POLYMORPHISM);
+    }
+
+    @Test
+    public void convertNonExistingClassificationToEnum() throws Exception {
+        String classification = "XXXXX";
+        try {
+            HGMDClient.convertClassificationToEnum(classification);
+        } catch (UnknownFormatConversionException e){
+            assertEquals("Conversion = 'Cannot recognise: " +classification + "'", e.getMessage());
+        }
+    }
+
 
 }

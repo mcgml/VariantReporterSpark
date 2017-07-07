@@ -10,19 +10,42 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UnknownFormatConversionException;
+import java.util.logging.Logger;
 
 /**
  * Web-scrape API for working with HGMD annotations
  */
 public class HGMDClient {
+    private static final Logger LOGGER = Logger.getLogger(HGMDClient.class.getName());
+
     private static String sessionId;
 
     public static ArrayList<HGMDBatchSearchResult> batchSearchByHg19Vcf(List<GenomeVariant> genomeVariantList) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        //loop over genome variants and build query list
+        for (int i = 0; i < genomeVariantList.size(); ++i){
+            stringBuilder.append(genomeVariantList.get(i).getContig());
+            stringBuilder.append("\t");
+            stringBuilder.append(genomeVariantList.get(i).getPos());
+            stringBuilder.append("\t");
+            stringBuilder.append("ID");
+            stringBuilder.append(i + 1);
+            stringBuilder.append("\t");
+            stringBuilder.append(genomeVariantList.get(i).getRef());
+            stringBuilder.append("\t");
+            stringBuilder.append(genomeVariantList.get(i).getAlt());
+            stringBuilder.append("\n");
+        }
+
+        //get hgmd document
+        LOGGER.info("HGMD Payload: " + stringBuilder.toString());
         return parseDocument(Jsoup
                 .connect("https://portal.biobase-international.com/hgmd/pro/batsearch.php")
-                .data("search4", "hg19VCF", "input", genomeVariantList.toString(), "DM", "Y", "DP", "Y")
+                .data("search4", "hg19VCF", "input", stringBuilder.toString(), "DM", "Y", "DP", "Y")
                 .cookie("sid", sessionId)
                 .get());
+
     }
 
     public static void setCookie(String username, String password) throws IOException {
