@@ -1,5 +1,6 @@
 package nhs.genetics.cardiff;
 
+import nhs.genetics.cardiff.framework.hgmd.HGMDClient;
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
 import org.broadinstitute.gatk.engine.samples.PedReader;
@@ -40,6 +41,7 @@ public class Main {
         HashSet<String> preferredTranscripts = null;
         List<Sample> samples = null;
         String hgmdUsername = null, hgmdPassword = null;
+        HGMDClient hgmdClient = new HGMDClient();
 
         //parse command line
         CommandLineParser commandLineParser = new BasicParser();
@@ -78,6 +80,16 @@ public class Main {
             formatter.printHelp(PROGRAM + " " + VERSION, options);
             LOGGER.log(Level.SEVERE, "Check arguments: " + e.getMessage());
             System.exit(-1);
+        }
+
+        //connect to HGMD
+        if (hgmdUsername != null && hgmdPassword != null){
+            try {
+                hgmdClient.setCookie(commandLine.getOptionValue("Hu"), commandLine.getOptionValue("Hp"));
+            } catch (IOException e){
+                LOGGER.log(Level.SEVERE,"Could not connect to HGMD: " + e.getMessage());
+                System.exit(1);
+            }
         }
 
         //parse preferred transcripts list

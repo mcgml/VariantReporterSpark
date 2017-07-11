@@ -17,23 +17,22 @@ import java.util.logging.Logger;
  */
 public class HGMDClient {
     private static final Logger LOGGER = Logger.getLogger(HGMDClient.class.getName());
+    private String sessionId;
 
-    private static String sessionId;
-
-    public static ArrayList<HGMDBatchSearchResult> batchSearchByHg19Vcf(List<GenomeVariant> genomeVariantList) throws IOException {
+    public ArrayList<HGMDBatchSearchResult> batchSearchByHg19Vcf(List<GenomeVariant> genomeVariantList) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
 
         //loop over genome variants and build query list
         for (int i = 0; i < genomeVariantList.size(); ++i){
             stringBuilder.append(genomeVariantList.get(i).getContig());
-            stringBuilder.append("\t");
+            stringBuilder.append(" ");
             stringBuilder.append(genomeVariantList.get(i).getPos());
-            stringBuilder.append("\t");
+            stringBuilder.append(" ");
             stringBuilder.append("ID");
             stringBuilder.append(i + 1);
-            stringBuilder.append("\t");
+            stringBuilder.append(" ");
             stringBuilder.append(genomeVariantList.get(i).getRef());
-            stringBuilder.append("\t");
+            stringBuilder.append(" ");
             stringBuilder.append(genomeVariantList.get(i).getAlt());
             stringBuilder.append("\n");
         }
@@ -48,7 +47,7 @@ public class HGMDClient {
 
     }
 
-    public static void setCookie(String username, String password) throws IOException {
+    public void setCookie(String username, String password) throws IOException {
         Connection.Response response = Jsoup
                 .connect("https://portal.biobase-international.com/cgi-bin/portal/login.cgi")
                 .data("login", username, "password", password)
@@ -57,7 +56,7 @@ public class HGMDClient {
         sessionId = response.cookie("sid");
     }
 
-    protected static ArrayList<HGMDBatchSearchResult> parseDocument(Document document){
+    protected ArrayList<HGMDBatchSearchResult> parseDocument(Document document){
         ArrayList<HGMDBatchSearchResult> results = new ArrayList<>();
 
         //loop over annotation rows and map to obj
@@ -70,7 +69,7 @@ public class HGMDClient {
                             row.select("td").get(3).text(),
                             row.select("td").get(4).text(),
                             row.select("td").get(5).text(),
-                            HGMDClient.convertClassificationToEnum(row.select("td").get(6).text()),
+                            convertClassificationToEnum(row.select("td").get(6).text()),
                             row.select("td").get(7).text().equals("N/A") ? null : row.select("td").get(7).text(),
                             row.select("form").select("input").attr("value")
                     )
@@ -80,13 +79,17 @@ public class HGMDClient {
         return results;
     }
 
-    protected static HGMDVariantClass convertClassificationToEnum(String classification){
+    protected HGMDVariantClass convertClassificationToEnum(String classification){
         switch (classification){
             case "DM": return HGMDVariantClass.DISEASE_CAUSING_MUTATION;
             case "DM?" : return HGMDVariantClass.DISEASE_CAUSING_MUTATION_QUERY;
             case "DP": return HGMDVariantClass.DISEASE_ASSOCIATED_POLYMORPHISM;
             default: throw new UnknownFormatConversionException("Cannot recognise: " + classification);
         }
+    }
+
+    public boolean isCookieSet(){
+        return sessionId != null;
     }
 
 }

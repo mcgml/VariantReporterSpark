@@ -48,34 +48,33 @@ public class HGMDClientTest {
             "Designed by P.D.Stenson HGMD&reg;<br><a class='black' href='copyright.php'>Copyright &copy; Cardiff University</a> 2017\n" +
             "</div>\n" +
             "<p class='spacer'></div></body></html>\n";
-
     @Test
     public void parseDocument() throws Exception {
-        assertEquals(HGMDClient.parseDocument(Jsoup.parse(html)).get(0), new HGMDBatchSearchResult(
+        assertEquals(new HGMDClient().parseDocument(Jsoup.parse(html)).get(0), new HGMDBatchSearchResult(
                 1,"2 675623 ID1 T C", "TMEM18", "Asp22Gly", "c.65A>G", "chr2:675623", HGMDVariantClass.DISEASE_CAUSING_MUTATION_QUERY, null, "CM1310957"
         ));
     }
 
     @Test
     public void convertDMClassificationToEnum() throws Exception {
-        assertEquals(HGMDClient.convertClassificationToEnum("DM"), HGMDVariantClass.DISEASE_CAUSING_MUTATION);
+        assertEquals(new HGMDClient().convertClassificationToEnum("DM"), HGMDVariantClass.DISEASE_CAUSING_MUTATION);
     }
 
     @Test
     public void convertDMQClassificationToEnum() throws Exception {
-        assertEquals(HGMDClient.convertClassificationToEnum("DM?"), HGMDVariantClass.DISEASE_CAUSING_MUTATION_QUERY);
+        assertEquals(new HGMDClient().convertClassificationToEnum("DM?"), HGMDVariantClass.DISEASE_CAUSING_MUTATION_QUERY);
     }
 
     @Test
     public void convertDPClassificationToEnum() throws Exception {
-        assertEquals(HGMDClient.convertClassificationToEnum("DP"), HGMDVariantClass.DISEASE_ASSOCIATED_POLYMORPHISM);
+        assertEquals(new HGMDClient().convertClassificationToEnum("DP"), HGMDVariantClass.DISEASE_ASSOCIATED_POLYMORPHISM);
     }
 
     @Test
     public void convertNonExistingClassificationToEnum() throws Exception {
         String classification = "XXXXX";
         try {
-            HGMDClient.convertClassificationToEnum(classification);
+            new HGMDClient().convertClassificationToEnum(classification);
         } catch (UnknownFormatConversionException e){
             assertEquals("Conversion = 'Cannot recognise: " +classification + "'", e.getMessage());
         }
