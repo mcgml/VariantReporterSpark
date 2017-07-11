@@ -2,7 +2,7 @@ package nhs.genetics.cardiff;
 
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
-import nhs.genetics.cardiff.framework.spark.filter.*;
+import nhs.genetics.cardiff.filters.*;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;

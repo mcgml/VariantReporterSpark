@@ -3,11 +3,11 @@ package nhs.genetics.cardiff;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
 import htsjdk.variant.variantcontext.VariantContext;
+import nhs.genetics.cardiff.filters.FrameworkSparkFilter;
 import nhs.genetics.cardiff.framework.GenomeVariant;
 import nhs.genetics.cardiff.framework.panelapp.ModeOfInheritance;
 import nhs.genetics.cardiff.framework.panelapp.PanelAppRestClient;
 import nhs.genetics.cardiff.framework.panelapp.Result;
-import nhs.genetics.cardiff.framework.spark.filter.FrameworkSparkFilter;
 import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
 import org.broadinstitute.gatk.engine.samples.Sample;
 
