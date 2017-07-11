@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.framework.spark.filter;
+package nhs.genetics.cardiff.filters;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.GenotypeBuilder;
@@ -11,11 +11,12 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 /**
- * Created by ml on 29/06/2017.
+ * Test for Dominant workflow
  */
-public class CompoundHeterozygousSparkFilterTest {
+public class DominantSparkFilterTest {
     @Test
     public void passAutosomal() throws Exception {
+
         GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
 
         VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "1", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
@@ -29,10 +30,11 @@ public class CompoundHeterozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new CompoundHeterozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
+        assertEquals(true, new DominantSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
     }
     @Test
     public void passXFemale() throws Exception {
+
         GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
 
         VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "X", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
@@ -46,27 +48,11 @@ public class CompoundHeterozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new CompoundHeterozygousSparkFilter("sample", Gender.FEMALE).call(variantContextBuilder.make()));
+        assertEquals(true, new DominantSparkFilter("sample", Gender.FEMALE).call(variantContextBuilder.make()));
     }
     @Test
-    public void failAutosomalHom() throws Exception {
-        GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
+    public void passXMaleHemiDom() throws Exception {
 
-        VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "1", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
-        variantContextBuilder.attribute("AC", new int[]{2});
-        variantContextBuilder.unfiltered();
-
-        variantContextBuilder.genotypes(
-                genotypeBuilder.name("sample")
-                        .alleles(Arrays.asList(Allele.create("T", false), Allele.create("T", false)))
-                        .unfiltered()
-                        .make()
-        );
-
-        assertEquals(false, new CompoundHeterozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
-    }
-    @Test
-    public void failXMale() throws Exception {
         GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
 
         VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "X", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
@@ -80,44 +66,42 @@ public class CompoundHeterozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new CompoundHeterozygousSparkFilter("sample", Gender.MALE).call(variantContextBuilder.make()));
+        assertEquals(true, new DominantSparkFilter("sample", Gender.MALE).call(variantContextBuilder.make()));
     }
     @Test
-    public void failHighGenomeAf() throws Exception {
+    public void passYMaleHemiDom() throws Exception {
+
         GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
 
-        VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "1", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
-        variantContextBuilder.attribute("GNOMAD_2.0.1_Genome_chr1.AF_POPMAX", new double[]{0.1});
-        variantContextBuilder.attribute("GNOMAD_2.0.1_Exome.AF_POPMAX", new double[]{0.00001});
+        VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "Y", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
         variantContextBuilder.attribute("AC", new int[]{1});
         variantContextBuilder.unfiltered();
 
         variantContextBuilder.genotypes(
                 genotypeBuilder.name("sample")
-                        .alleles(Arrays.asList(Allele.create("A", true), Allele.create("T", false)))
+                        .alleles(Arrays.asList(Allele.create("T", false), Allele.create("T", false)))
                         .unfiltered()
                         .make()
         );
 
-        assertEquals(false, new CompoundHeterozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
+        assertEquals(true, new DominantSparkFilter("sample", Gender.MALE).call(variantContextBuilder.make()));
     }
     @Test
-    public void failHighExomeAf() throws Exception {
+    public void failHom() throws Exception {
+
         GenotypeBuilder genotypeBuilder = new GenotypeBuilder();
 
         VariantContextBuilder variantContextBuilder = new VariantContextBuilder("test", "1", 10, 10, Arrays.asList(Allele.create("A", true), Allele.create("T", false)));
-        variantContextBuilder.attribute("GNOMAD_2.0.1_Genome_chr1.AF_POPMAX", new double[]{0.000001});
-        variantContextBuilder.attribute("GNOMAD_2.0.1_Exome.AF_POPMAX", new double[]{0.1});
-        variantContextBuilder.attribute("AC", new int[]{1});
+        variantContextBuilder.attribute("AC", new int[]{2});
         variantContextBuilder.unfiltered();
 
         variantContextBuilder.genotypes(
                 genotypeBuilder.name("sample")
-                        .alleles(Arrays.asList(Allele.create("A", true), Allele.create("T", false)))
+                        .alleles(Arrays.asList(Allele.create("T", false), Allele.create("T", false)))
                         .unfiltered()
                         .make()
         );
 
-        assertEquals(false, new CompoundHeterozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
+        assertEquals(false, new DominantSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
     }
 }

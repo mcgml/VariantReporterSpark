@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.framework.spark.filter;
+package nhs.genetics.cardiff.filters;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.GenotypeBuilder;

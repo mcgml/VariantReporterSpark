@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.framework.spark.filter;
+package nhs.genetics.cardiff.filters;
 
 import htsjdk.variant.variantcontext.VariantContext;
 import org.apache.spark.api.java.function.Function;
