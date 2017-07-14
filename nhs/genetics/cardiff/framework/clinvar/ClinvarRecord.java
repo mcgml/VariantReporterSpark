@@ -27,19 +27,15 @@ public class ClinvarRecord {
     public long getUid() {
         return uid;
     }
-
     public String getTitle() {
         return title;
     }
-
     public SupportingSubmissionsRecord getSupportingSubmissionsRecord() {
         return supportingSubmissionsRecord;
     }
-
     public ClinicalSignificanceRecord getClinicalSignificanceRecord() {
         return clinicalSignificanceRecord;
     }
-
     public String getRecordStatus() {
         return recordStatus;
     }
@@ -57,5 +53,10 @@ public class ClinvarRecord {
     @Override
     public int hashCode() {
         return (int) (uid ^ (uid >>> 32));
+    }
+
+    @Override
+    public String toString(){
+        return title;
     }
 }
