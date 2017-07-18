@@ -7,6 +7,7 @@ import org.broadinstitute.gatk.engine.samples.PedReader;
 import org.broadinstitute.gatk.engine.samples.Sample;
 import org.broadinstitute.gatk.engine.samples.SampleDB;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -94,8 +95,15 @@ public class Main {
 
         //parse preferred transcripts list
         if (preferredTranscriptsFile != null){
-            try (Stream<String> stream = Files.lines(Paths.get(commandLine.getOptionValue("T")))) {
-                preferredTranscripts = stream.collect(Collectors.toCollection(HashSet::new));
+            try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(commandLine.getOptionValue("T")))) {
+
+                String line = null;
+                preferredTranscripts = new HashSet<>();
+
+                while ((line = bufferedReader.readLine()) != null) {
+                    preferredTranscripts.add(line);
+                }
+
             } catch (IOException e){
                 LOGGER.log(Level.SEVERE,"Could not parse preferred transcript list: " + e.getMessage());
                 System.exit(-1);
