@@ -3,6 +3,7 @@ package nhs.genetics.cardiff;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
 import nhs.genetics.cardiff.filters.*;
+import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -50,6 +51,8 @@ public class VCFReaderSpark {
 
                 LOGGER.info("Filtering " + sample.getID());
 
+                HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>> results = new HashMap<>();
+
                 JavaRDD<VariantContext> informativeGenotypes = informativeVariants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()));
                 informativeGenotypes.persist(StorageLevel.MEMORY_ONLY());
@@ -60,30 +63,62 @@ public class VCFReaderSpark {
                 if (sample.getMother() != null && sample.getFather() != null){
 
                     //de novo
-                    WriteVariants.toTextFile(informativeGenotypes
+                    for (VariantContextWrapper variantContext : informativeGenotypes
                             .filter(new DeNovoSparkFilter(sample.getID(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                            .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DE_NOVO, preferredTranscripts, onlyPrintKnownRefSeq);
+                            .map(VariantContextWrapper::new)
+                            .collect()){
+
+                        if (!results.containsKey(variantContext)){
+                            results.put(variantContext, new ArrayList<>());
+                        }
+
+                        results.get(variantContext).add(FrameworkSparkFilter.Workflow.DE_NOVO);
+                    }
 
                     //UPD
-                    WriteVariants.toTextFile(informativeGenotypes
+                    for (VariantContextWrapper variantContext : informativeGenotypes
                             .filter(new UniparentalIsodisomySparkFilter(sample.getID(), sample.getGender(), sample.getFather().getID(), sample.getMother().getID()))
                             .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                            .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY, preferredTranscripts, onlyPrintKnownRefSeq);
+                            .map(VariantContextWrapper::new)
+                            .collect()){
+
+                        if (!results.containsKey(variantContext)){
+                            results.put(variantContext, new ArrayList<>());
+                        }
+
+                        results.get(variantContext).add(FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY);
+                    }
 
                 }
 
                 //homozygous
-                WriteVariants.toTextFile(informativeGenotypes
+                for (VariantContextWrapper variantContext : informativeGenotypes
                         .filter(new HomozygousSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.HOMOZYGOUS, preferredTranscripts, onlyPrintKnownRefSeq);
+                        .map(VariantContextWrapper::new)
+                        .collect()){
+
+                    if (!results.containsKey(variantContext)){
+                        results.put(variantContext, new ArrayList<>());
+                    }
+
+                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.HOMOZYGOUS);
+                }
 
                 //dominant
-                WriteVariants.toTextFile(informativeGenotypes
+                for (VariantContextWrapper variantContext : informativeGenotypes
                         .filter(new DominantSparkFilter(sample.getID(), sample.getGender()))
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .collect(), sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.DOMINANT, preferredTranscripts, onlyPrintKnownRefSeq);
+                        .map(VariantContextWrapper::new)
+                        .collect()) {
+
+                    if (!results.containsKey(variantContext)) {
+                        results.put(variantContext, new ArrayList<>());
+                    }
+
+                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.DOMINANT);
+                }
 
                 //compound het candidates
                 JavaRDD<VariantContext> candidateCompoundHets = informativeGenotypes
@@ -91,14 +126,20 @@ public class VCFReaderSpark {
                         .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()));
                 candidateCompoundHets.persist(StorageLevel.MEMORY_ONLY());
 
-                //filter candidates by gene name and report
-                WriteVariants.toTextFile(candidateCompoundHets
-                                .filter(new GeneSparkFilter(FrameworkSparkFilter.getVariantsWithMultipleGeneHits(
-                                        candidateCompoundHets.flatMap(new FlatMapVepToGeneList(vcfHeaders.getVepHeaders())).countByValue()
-                                ), vcfHeaders.getVepHeaders())).collect(),
-                        sample, vcfHeaders.getVepHeaders(), FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS,preferredTranscripts, onlyPrintKnownRefSeq
-                );
+                //compound hets
+                for (VariantContextWrapper variantContext : candidateCompoundHets
+                        .filter(new GeneSparkFilter(
+                                FrameworkSparkFilter.getVariantsWithMultipleGeneHits(candidateCompoundHets.flatMap(new FlatMapVepToGeneList(vcfHeaders.getVepHeaders())).countByValue()),
+                                vcfHeaders.getVepHeaders()))
+                        .map(VariantContextWrapper::new)
+                        .collect()) {
 
+                    if (!results.containsKey(variantContext)) {
+                        results.put(variantContext, new ArrayList<>());
+                    }
+
+                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS);
+                }
 
             }
         }

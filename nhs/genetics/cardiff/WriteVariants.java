@@ -2,9 +2,9 @@ package nhs.genetics.cardiff;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.Genotype;
-import htsjdk.variant.variantcontext.VariantContext;
 import nhs.genetics.cardiff.filters.FrameworkSparkFilter;
 import nhs.genetics.cardiff.framework.GenomeVariant;
+import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import nhs.genetics.cardiff.framework.panelapp.ModeOfInheritance;
 import nhs.genetics.cardiff.framework.panelapp.PanelAppRestClient;
 import nhs.genetics.cardiff.framework.panelapp.Result;
@@ -32,20 +32,21 @@ public class WriteVariants {
     private static final Logger LOGGER = Logger.getLogger(WriteVariants.class.getName());
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 
-    public static void toTextFile(List<VariantContext> variants, Sample sample, String[] vepHeaders, FrameworkSparkFilter.Workflow workflow, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
-        LOGGER.log(Level.INFO, "Writing " + sample.getID() + " from workflow " + workflow.toString() + " with " + variants.size() + " variants");
+    public static void toTextFile(HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>> variants, Sample sample, String[] vepHeaders, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
+        LOGGER.log(Level.INFO, "Writing " + sample.getID() + " with " + variants.size() + " variants");
 
         //store panelapp results
         HashMap<String, Result[]> panelAppResults = new HashMap<>();
 
-        try (PrintWriter printWriter = new PrintWriter(sample.getFamilyID() + "_" + sample.getID() + "_" + workflow.toString() + "_VariantReport.txt")){
+        try (PrintWriter printWriter = new PrintWriter(sample.getFamilyID() + "_" + sample.getID() + "_VariantReport.txt")){
 
             //print headers
             printWriter.println("#" + Main.PROGRAM + " v" + Main.VERSION + " (" + dateFormat.format(new Date()) + ")");
             printWriter.println("#SampleId\tWorkflow\tVariantId\tGenotype\tProband\tFather\tMother\tdbSNP\tCosmic\tHGMD\tGnomadExomePopMax\tGnomadGenomePopMax\tGene\tModeOfInheritance\tDiseaseName\tTranscript\tPreferredTranscript\tHGVSc\tHGVSp\tConsequences\tIntron\tExon\tSIFT\tPolyPhen");
 
             //loop over writable variants alleles for this patient
-            for (VariantContext variantContext : variants){
+            for (Map.Entry<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>> iter : variants.entrySet()){
+                VariantContextWrapper variantContext = iter.getKey();
 
                 //get Genotype for patient
                 Genotype genotype = variantContext.getGenotype(sample.getID());
@@ -79,7 +80,7 @@ public class WriteVariants {
 
                                 //print variant annotations
                                 printWriter.print(sample.getID());printWriter.print("\t");
-                                printWriter.print(workflow);printWriter.print("\t");
+                                printWriter.print(iter.getValue().stream().map(Enum::name).collect(Collectors.joining(",")));printWriter.print("\t");
                                 printWriter.print(genomeVariant);printWriter.print("\t");
                                 printWriter.print(genotype.getType()); printWriter.print("\t");
 
