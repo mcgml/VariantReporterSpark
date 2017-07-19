@@ -1,10 +1,12 @@
 package nhs.genetics.cardiff.framework.panelapp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * POJO for PanelApp object
  */
+@JsonIgnoreProperties({"unknown", "Other - please specify in evaluation comments", "Other - please specifiy in evaluation comments" })
 public enum ModeOfInheritance {
     @JsonProperty("monoallelic_not_imprinted")
     MONOALLELIC_NOT_IMPRINTED,
@@ -25,9 +27,5 @@ public enum ModeOfInheritance {
     @JsonProperty("xlinked_monoallelic")
     XLINKED_MONOALLELIC,
     @JsonProperty("mitochondrial")
-    MITOCHONDRIAL,
-    @JsonProperty("unknown")
-    UNKNOWN,
-    @JsonProperty("Other - please specify in evaluation comments")
-    OTHER
+    MITOCHONDRIAL
 }

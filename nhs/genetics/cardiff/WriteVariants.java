@@ -114,7 +114,6 @@ public class WriteVariants {
                                     printWriter.print(
                                             Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
                                                     .map(Result::getModeOfInheritance)
-                                                    .filter(modeOfInheritance -> modeOfInheritance != ModeOfInheritance.UNKNOWN)
                                                     .filter(Objects::nonNull)
                                                     .map(ModeOfInheritance::toString)
                                                     .distinct()
