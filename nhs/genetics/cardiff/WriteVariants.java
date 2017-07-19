@@ -115,7 +115,7 @@ public class WriteVariants {
                                             Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
                                                     .map(Result::getModeOfInheritance)
                                                     .filter(modeOfInheritance -> modeOfInheritance != ModeOfInheritance.UNKNOWN)
-                                                    .filter(p -> p != null)
+                                                    .filter(Objects::nonNull)
                                                     .map(ModeOfInheritance::toString)
                                                     .distinct()
                                                     .collect(Collectors.joining("|"))
@@ -128,7 +128,7 @@ public class WriteVariants {
                                     printWriter.print(
                                             Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
                                                     .map(Result::getSpecificDiseaseName)
-                                                    .filter(p -> p != null)
+                                                    .filter(Objects::nonNull)
                                                     .distinct()
                                                     .collect(Collectors.joining("|"))
                                     );
