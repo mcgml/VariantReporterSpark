@@ -92,20 +92,6 @@ public class VCFReaderSpark {
 
                 }
 
-                //homozygous
-                for (VariantContextWrapper variantContext : informativeGenotypes
-                        .filter(new HomozygousSparkFilter(sample.getID(), sample.getGender()))
-                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
-                        .map(VariantContextWrapper::new)
-                        .collect()){
-
-                    if (!results.containsKey(variantContext)){
-                        results.put(variantContext, new ArrayList<>());
-                    }
-
-                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.HOMOZYGOUS);
-                }
-
                 //dominant
                 for (VariantContextWrapper variantContext : informativeGenotypes
                         .filter(new DominantSparkFilter(sample.getID(), sample.getGender()))
@@ -118,6 +104,20 @@ public class VCFReaderSpark {
                     }
 
                     results.get(variantContext).add(FrameworkSparkFilter.Workflow.DOMINANT);
+                }
+
+                //homozygous
+                for (VariantContextWrapper variantContext : informativeGenotypes
+                        .filter(new HomozygousSparkFilter(sample.getID(), sample.getGender()))
+                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                        .map(VariantContextWrapper::new)
+                        .collect()){
+
+                    if (!results.containsKey(variantContext)){
+                        results.put(variantContext, new ArrayList<>());
+                    }
+
+                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.HOMOZYGOUS);
                 }
 
                 //compound het candidates
@@ -141,6 +141,8 @@ public class VCFReaderSpark {
                     results.get(variantContext).add(FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS);
                 }
 
+                //write variant report
+                WriteVariants.toTextFile(results, sample, vcfHeaders.getVepHeaders(), preferredTranscripts, onlyPrintKnownRefSeq);
             }
         }
 

@@ -13,11 +13,11 @@ import java.util.Set;
 public class FrameworkSparkFilter {
 
     public enum Workflow {
-        DOMINANT,
-        COMPOUND_HETEROZYGOUS,
         DE_NOVO,
+        UNIPARENTAL_ISODISOMY,
+        DOMINANT,
         HOMOZYGOUS,
-        UNIPARENTAL_ISODISOMY
+        COMPOUND_HETEROZYGOUS
     }
 
     /**

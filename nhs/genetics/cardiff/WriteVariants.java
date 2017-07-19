@@ -80,7 +80,7 @@ public class WriteVariants {
 
                                 //print variant annotations
                                 printWriter.print(sample.getID());printWriter.print("\t");
-                                printWriter.print(iter.getValue().stream().map(Enum::name).collect(Collectors.joining(",")));printWriter.print("\t");
+                                printWriter.print(iter.getValue().stream().map(Enum::name).collect(Collectors.joining("|")));printWriter.print("\t");
                                 printWriter.print(genomeVariant);printWriter.print("\t");
                                 printWriter.print(genotype.getType()); printWriter.print("\t");
 

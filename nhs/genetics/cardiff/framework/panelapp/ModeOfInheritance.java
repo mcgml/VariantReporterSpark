@@ -28,6 +28,6 @@ public enum ModeOfInheritance {
     MITOCHONDRIAL,
     @JsonProperty("unknown")
     UNKNOWN,
-    @JsonProperty("Other - please specifiy in evaluation comments")
+    @JsonProperty("Other - please specify in evaluation comments")
     OTHER
 }
