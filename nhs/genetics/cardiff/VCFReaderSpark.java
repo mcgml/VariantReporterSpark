@@ -26,12 +26,13 @@ import java.util.logging.Logger;
 public class VCFReaderSpark {
     private static final Logger LOGGER = Logger.getLogger(VCFReaderSpark.class.getName());
 
-    public static void reportVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
+    public static ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifyCandidateVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads) throws IOException {
 
         SparkConf sparkConf = new SparkConf().setAppName(Main.PROGRAM).setMaster("local[" + threads + "]");
         //sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer"); // TODO production
         //sparkConf.set("spark.kryo.registrationRequired", "true"); // TODO production
         JavaSparkContext javaSparkContext = new JavaSparkContext(sparkConf);
+        ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifiedVariants = new ArrayList<>();
 
         //load variants and persist informative variants
         JavaRDD<VariantContext> informativeVariants = javaSparkContext.textFile(file.toString())
@@ -46,12 +47,15 @@ public class VCFReaderSpark {
 
         LOGGER.info("Identified " + informativeVariants.count() + " informative sites.");
 
-        for (Sample sample : samples){
+        //loop over samples and collect stratified variants
+        for (int n = 0; n < samples.size(); ++n){
+            Sample sample = samples.get(n);
+
+            stratifiedVariants.add(new HashMap<>());
+
             if (sample.getAffection() == Affection.AFFECTED){
 
                 LOGGER.info("Filtering " + sample.getID());
-
-                HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>> results = new HashMap<>();
 
                 JavaRDD<VariantContext> informativeGenotypes = informativeVariants
                         .filter(new NonVariantBySampleSparkFilter(sample.getID()));
@@ -69,11 +73,11 @@ public class VCFReaderSpark {
                             .map(VariantContextWrapper::new)
                             .collect()){
 
-                        if (!results.containsKey(variantContext)){
-                            results.put(variantContext, new ArrayList<>());
+                        if (!stratifiedVariants.get(n).containsKey(variantContext)){
+                            stratifiedVariants.get(n).put(variantContext, new ArrayList<>());
                         }
 
-                        results.get(variantContext).add(FrameworkSparkFilter.Workflow.DE_NOVO);
+                        stratifiedVariants.get(n).get(variantContext).add(FrameworkSparkFilter.Workflow.DE_NOVO);
                     }
 
                     //UPD
@@ -83,11 +87,11 @@ public class VCFReaderSpark {
                             .map(VariantContextWrapper::new)
                             .collect()){
 
-                        if (!results.containsKey(variantContext)){
-                            results.put(variantContext, new ArrayList<>());
+                        if (!stratifiedVariants.get(n).containsKey(variantContext)){
+                            stratifiedVariants.get(n).put(variantContext, new ArrayList<>());
                         }
 
-                        results.get(variantContext).add(FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY);
+                        stratifiedVariants.get(n).get(variantContext).add(FrameworkSparkFilter.Workflow.UNIPARENTAL_ISODISOMY);
                     }
 
                 }
@@ -99,11 +103,11 @@ public class VCFReaderSpark {
                         .map(VariantContextWrapper::new)
                         .collect()) {
 
-                    if (!results.containsKey(variantContext)) {
-                        results.put(variantContext, new ArrayList<>());
+                    if (!stratifiedVariants.get(n).containsKey(variantContext)) {
+                        stratifiedVariants.get(n).put(variantContext, new ArrayList<>());
                     }
 
-                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.DOMINANT);
+                    stratifiedVariants.get(n).get(variantContext).add(FrameworkSparkFilter.Workflow.DOMINANT);
                 }
 
                 //homozygous
@@ -113,11 +117,11 @@ public class VCFReaderSpark {
                         .map(VariantContextWrapper::new)
                         .collect()){
 
-                    if (!results.containsKey(variantContext)){
-                        results.put(variantContext, new ArrayList<>());
+                    if (!stratifiedVariants.get(n).containsKey(variantContext)){
+                        stratifiedVariants.get(n).put(variantContext, new ArrayList<>());
                     }
 
-                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.HOMOZYGOUS);
+                    stratifiedVariants.get(n).get(variantContext).add(FrameworkSparkFilter.Workflow.HOMOZYGOUS);
                 }
 
                 //compound het candidates
@@ -134,18 +138,18 @@ public class VCFReaderSpark {
                         .map(VariantContextWrapper::new)
                         .collect()) {
 
-                    if (!results.containsKey(variantContext)) {
-                        results.put(variantContext, new ArrayList<>());
+                    if (!stratifiedVariants.get(n).containsKey(variantContext)) {
+                        stratifiedVariants.get(n).put(variantContext, new ArrayList<>());
                     }
 
-                    results.get(variantContext).add(FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS);
+                    stratifiedVariants.get(n).get(variantContext).add(FrameworkSparkFilter.Workflow.COMPOUND_HETEROZYGOUS);
                 }
 
-                //write variant report
-                WriteVariants.toTextFile(results, sample, vcfHeaders.getVepHeaders(), preferredTranscripts, onlyPrintKnownRefSeq);
             }
         }
 
         javaSparkContext.close();
+
+        return stratifiedVariants;
     }
 }

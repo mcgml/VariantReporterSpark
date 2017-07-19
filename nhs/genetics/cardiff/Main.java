@@ -1,5 +1,7 @@
 package nhs.genetics.cardiff;
 
+import nhs.genetics.cardiff.filters.FrameworkSparkFilter;
+import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import nhs.genetics.cardiff.framework.hgmd.HGMDClient;
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
@@ -12,9 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +41,7 @@ public class Main {
         List<Sample> samples = null;
         String hgmdUsername = null, hgmdPassword = null;
         HGMDClient hgmdClient = new HGMDClient();
+        ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifiedVariants;
 
         //parse command line
         CommandLineParser commandLineParser = new BasicParser();
@@ -95,7 +96,7 @@ public class Main {
         if (preferredTranscriptsFile != null){
             try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(commandLine.getOptionValue("T")))) {
 
-                String line = null;
+                String line;
                 preferredTranscripts = new HashSet<>();
 
                 while ((line = bufferedReader.readLine()) != null) {
@@ -136,7 +137,13 @@ public class Main {
 
         //report variants
         try {
-            VCFReaderSpark.reportVariants(variantCallFormatFile, vcfHeaders, samples, threads, preferredTranscripts, onlyPrintKnownRefSeq);
+            WriteVariants.toTextFile(
+                    VCFReaderSpark.stratifyCandidateVariants(variantCallFormatFile, vcfHeaders, samples, threads),
+                    samples,
+                    vcfHeaders.getVepHeaders(),
+                    preferredTranscripts,
+                    onlyPrintKnownRefSeq
+            );
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
             System.exit(-1);
