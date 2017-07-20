@@ -28,4 +28,5 @@ public class VariantContextWrapper extends VariantContext {
             return false;
         }
     }
+
 }

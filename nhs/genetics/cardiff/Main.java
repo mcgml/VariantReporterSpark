@@ -29,6 +29,8 @@ public class Main {
 
     static final String VERSION = "1.0.0";
     static final String PROGRAM = "VariantReporterSpark";
+    private static final int PROGRAM_ERROR_STATUS_CODE = -1;
+    private static final int USER_ERROR_STATUS_CODE = 1;
 
     public static void main(String[] args) {
 
@@ -76,7 +78,7 @@ public class Main {
         } catch (ParseException | NullPointerException e){
             formatter.printHelp(PROGRAM + " " + VERSION, options);
             LOGGER.log(Level.SEVERE, "Check arguments: " + e.getMessage());
-            System.exit(-1);
+            System.exit(USER_ERROR_STATUS_CODE);
         }
 
         //connect to HGMD
@@ -84,8 +86,8 @@ public class Main {
             try {
                 hgmdClient.setCookie(commandLine.getOptionValue("Hu"), commandLine.getOptionValue("Hp"));
             } catch (IOException e){
-                LOGGER.log(Level.SEVERE,"Could not connect to HGMD: " + e.getMessage());
-                System.exit(1);
+                LOGGER.log(Level.SEVERE,"Could not connect to HGMD, check connection and credentials: " + e.getMessage());
+                System.exit(USER_ERROR_STATUS_CODE);
             }
         }
 
@@ -102,7 +104,7 @@ public class Main {
 
             } catch (IOException e){
                 LOGGER.log(Level.SEVERE,"Could not parse preferred transcript list: " + e.getMessage());
-                System.exit(-1);
+                System.exit(PROGRAM_ERROR_STATUS_CODE);
             }
         }
 
@@ -121,7 +123,7 @@ public class Main {
 
         } catch (IOException|IllegalArgumentException e){
             LOGGER.log(Level.SEVERE, "Could not read VCF version or not supported: " + e.getMessage());
-            System.exit(-1);
+            System.exit(PROGRAM_ERROR_STATUS_CODE);
         }
 
         //parse PED file
@@ -129,7 +131,7 @@ public class Main {
             samples = new PedReader().parse(pedFile, EnumSet.noneOf(PedReader.MissingPedField.class), new SampleDB());
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
-            System.exit(-1);
+            System.exit(PROGRAM_ERROR_STATUS_CODE);
         }
 
         //report variants
@@ -144,7 +146,7 @@ public class Main {
             );
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
-            System.exit(-1);
+            System.exit(PROGRAM_ERROR_STATUS_CODE);
         }
 
     }
