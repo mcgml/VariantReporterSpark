@@ -1,7 +1,5 @@
 package nhs.genetics.cardiff;
 
-import nhs.genetics.cardiff.filters.FrameworkSparkFilter;
-import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import nhs.genetics.cardiff.framework.hgmd.HGMDClient;
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
@@ -41,7 +39,6 @@ public class Main {
         List<Sample> samples = null;
         String hgmdUsername = null, hgmdPassword = null;
         HGMDClient hgmdClient = new HGMDClient();
-        ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifiedVariants;
 
         //parse command line
         CommandLineParser commandLineParser = new BasicParser();
@@ -142,7 +139,8 @@ public class Main {
                     samples,
                     vcfHeaders.getVepHeaders(),
                     preferredTranscripts,
-                    onlyPrintKnownRefSeq
+                    onlyPrintKnownRefSeq,
+                    hgmdClient
             );
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());

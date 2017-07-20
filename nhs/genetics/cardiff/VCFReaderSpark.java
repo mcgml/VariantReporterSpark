@@ -12,7 +12,6 @@ import org.broadinstitute.gatk.engine.samples.Affection;
 import org.broadinstitute.gatk.engine.samples.Sample;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -26,7 +25,7 @@ import java.util.logging.Logger;
 public class VCFReaderSpark {
     private static final Logger LOGGER = Logger.getLogger(VCFReaderSpark.class.getName());
 
-    public static ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifyCandidateVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads) throws IOException {
+    public static ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifyCandidateVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads) {
 
         SparkConf sparkConf = new SparkConf().setAppName(Main.PROGRAM).setMaster("local[" + threads + "]");
         //sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer"); // TODO production

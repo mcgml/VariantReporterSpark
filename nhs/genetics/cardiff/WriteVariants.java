@@ -6,6 +6,7 @@ import nhs.genetics.cardiff.filters.FrameworkSparkFilter;
 import nhs.genetics.cardiff.framework.GenomeVariant;
 import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import nhs.genetics.cardiff.framework.hgmd.HGMDBatchSearchResult;
+import nhs.genetics.cardiff.framework.hgmd.HGMDClient;
 import nhs.genetics.cardiff.framework.panelapp.ModeOfInheritance;
 import nhs.genetics.cardiff.framework.panelapp.PanelAppRestClient;
 import nhs.genetics.cardiff.framework.panelapp.Result;
@@ -34,7 +35,7 @@ public class WriteVariants {
     private static final Logger LOGGER = Logger.getLogger(WriteVariants.class.getName());
     private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 
-    public static void toTextFile(ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> variants, List<Sample> samples, String[] vepHeaders, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq) throws IOException {
+    public static void toTextFile(ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> variants, List<Sample> samples, String[] vepHeaders, HashSet<String> preferredTranscripts, boolean onlyPrintKnownRefSeq, HGMDClient hgmdClient) throws IOException {
 
         //store panelapp results
         HashMap<String, Result[]> panelAppResults = new HashMap<>();
