@@ -3,6 +3,7 @@ package nhs.genetics.cardiff;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.vcf.VCFCodec;
 import nhs.genetics.cardiff.filters.*;
+import nhs.genetics.cardiff.mappers.*;
 import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;

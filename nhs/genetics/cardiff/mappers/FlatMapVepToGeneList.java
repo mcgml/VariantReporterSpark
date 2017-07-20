@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.filters;
+package nhs.genetics.cardiff.mappers;
 
 import htsjdk.variant.variantcontext.VariantContext;
 import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;

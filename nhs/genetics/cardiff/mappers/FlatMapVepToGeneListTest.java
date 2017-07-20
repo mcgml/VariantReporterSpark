@@ -1,4 +1,4 @@
-package nhs.genetics.cardiff.filters;
+package nhs.genetics.cardiff.mappers;
 
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.GenotypeBuilder;
