@@ -52,13 +52,8 @@ public class SubcontextVariantBySampleTest {
         VariantContext s1 = new SubcontextVariantBySample(new Sample("s1", new SampleDB())).call(cohort);
 
         assertEquals(cohort.getAttribute("AC"), s1.getAttribute("AC"));
-
-        try {
-            s1.validateAlternateAlleles();
-            s1.validateChromosomeCounts();
-        } catch (Exception e){
-            throw e;
-        }
-
+        assertEquals(cohort.getGenotype("s1"), s1.getGenotype("s1"));
+        assertNotEquals(cohort.getAlleles(), s1.getAlleles());
     }
+
 }
