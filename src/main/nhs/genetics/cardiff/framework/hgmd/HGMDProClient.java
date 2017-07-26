@@ -1,5 +1,6 @@
 package nhs.genetics.cardiff.framework.hgmd;
 
+import com.sun.javaws.exceptions.ErrorCodeResponseException;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
@@ -11,6 +12,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.rmi.AccessException;
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -183,11 +186,17 @@ public class HGMDProClient {
     }
 
     public void setCookie(String username, String password) throws IOException {
+
         Connection.Response response = Jsoup
                 .connect("https://portal.biobase-international.com/cgi-bin/portal/login.cgi")
                 .data("login", username, "password", password)
                 .method(Connection.Method.POST)
                 .execute();
+
+        if (response.statusCode() != 200){
+            throw new AccessException("Could not set cookie. Status code was "+ response.statusCode());
+        }
+
         sessionId = response.cookie("sid");
     }
 

@@ -1,5 +1,7 @@
 package nhs.genetics.cardiff;
 
+import nhs.genetics.cardiff.filters.FrameworkSparkFilter;
+import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import nhs.genetics.cardiff.framework.hgmd.HGMDProClient;
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
@@ -134,10 +136,18 @@ public class Main {
             System.exit(PROGRAM_ERROR_STATUS_CODE);
         }
 
-        //report variants
+        //stratify variants
+        ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifiedVariants = VCFReaderSpark
+                .stratifyCandidateVariants(variantCallFormatFile, vcfHeaders, samples, threads);
+
+        //annotate calls with on-line resources
+        //todo hgmd
+        //todo clinvar
+
+        //write output to file
         try {
             WriteVariants.toTextFile(
-                    VCFReaderSpark.stratifyCandidateVariants(variantCallFormatFile, vcfHeaders, samples, threads),
+                    stratifiedVariants,
                     samples,
                     vcfHeaders.getVepHeaders(),
                     preferredTranscripts,
