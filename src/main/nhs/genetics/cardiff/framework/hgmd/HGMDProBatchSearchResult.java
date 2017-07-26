@@ -3,7 +3,7 @@ package nhs.genetics.cardiff.framework.hgmd;
 /**
  * Class for storing the HGMD result
  */
-public class HGMDBatchSearchResult {
+public class HGMDProBatchSearchResult {
 
     private Integer number;
     private String searchTerm;
@@ -11,11 +11,11 @@ public class HGMDBatchSearchResult {
     private String hgmdMutation;
     private String hgvs;
     private String hg38Coordinate;
-    private HGMDVariantClass hgmdVariantClass;
+    private HGMDProVariantClass hgmdVariantClass;
     private String dbSnpIdentifier;
     private String hgmdAccession;
 
-    public HGMDBatchSearchResult(Integer number, String searchTerm, String geneSymbol, String hgmdMutation, String hgvs, String hg38Coordinate, HGMDVariantClass hgmdVariantClass, String dbSnpIdentifier, String hgmdAccession){
+    public HGMDProBatchSearchResult(Integer number, String searchTerm, String geneSymbol, String hgmdMutation, String hgvs, String hg38Coordinate, HGMDProVariantClass hgmdVariantClass, String dbSnpIdentifier, String hgmdAccession){
         this.number = number;
         this.searchTerm = searchTerm;
         this.geneSymbol = geneSymbol;
@@ -45,7 +45,7 @@ public class HGMDBatchSearchResult {
     public String getHg38Coordinate() {
         return hg38Coordinate;
     }
-    public HGMDVariantClass getHgmdVariantClass() {
+    public HGMDProVariantClass getHgmdVariantClass() {
         return hgmdVariantClass;
     }
     public String getDbSnpIdentifier() {
@@ -60,7 +60,7 @@ public class HGMDBatchSearchResult {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        HGMDBatchSearchResult that = (HGMDBatchSearchResult) o;
+        HGMDProBatchSearchResult that = (HGMDProBatchSearchResult) o;
 
         if (number != null ? !number.equals(that.number) : that.number != null) return false;
         if (searchTerm != null ? !searchTerm.equals(that.searchTerm) : that.searchTerm != null) return false;

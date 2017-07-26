@@ -1,6 +1,6 @@
 package nhs.genetics.cardiff;
 
-import nhs.genetics.cardiff.framework.hgmd.HGMDClient;
+import nhs.genetics.cardiff.framework.hgmd.HGMDProClient;
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
 import org.broadinstitute.gatk.engine.samples.PedReader;
@@ -40,7 +40,7 @@ public class Main {
         HashSet<String> preferredTranscripts = null;
         List<Sample> samples = null;
         String hgmdUsername = null, hgmdPassword = null;
-        HGMDClient hgmdClient = new HGMDClient();
+        HGMDProClient hgmdProClient = new HGMDProClient();
 
         //parse command line
         CommandLineParser commandLineParser = new BasicParser();
@@ -84,7 +84,7 @@ public class Main {
         //connect to HGMD
         if (hgmdUsername != null && hgmdPassword != null){
             try {
-                hgmdClient.setCookie(commandLine.getOptionValue("Hu"), commandLine.getOptionValue("Hp"));
+                hgmdProClient.setCookie(commandLine.getOptionValue("Hu"), commandLine.getOptionValue("Hp"));
             } catch (IOException e){
                 LOGGER.log(Level.SEVERE,"Could not connect to HGMD, check connection and credentials: " + e.getMessage());
                 System.exit(USER_ERROR_STATUS_CODE);
@@ -141,8 +141,7 @@ public class Main {
                     samples,
                     vcfHeaders.getVepHeaders(),
                     preferredTranscripts,
-                    onlyPrintKnownRefSeq,
-                    hgmdClient
+                    onlyPrintKnownRefSeq
             );
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
