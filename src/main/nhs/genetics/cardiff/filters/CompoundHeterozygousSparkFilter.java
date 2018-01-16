@@ -27,6 +27,7 @@ public class CompoundHeterozygousSparkFilter implements Function<VariantContext,
                     variantContext.getGenotype(sample).getAlleles()
                             .stream()
                             .filter(Allele::isNonReference)
+                            .filter(allele -> !FrameworkSparkFilter.isAlleleSpanningDeletion(allele))
                             .filter(allele -> FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContext, allele) < 0.01)
                             .filter(allele -> FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContext, allele) < 0.01)
                             .count() > 0;
