@@ -78,7 +78,6 @@ public class FrameworkSparkFilterTest {
     @Test
     public void isAlleleSpanningDeletionTest() throws Exception {
         assertTrue(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("*")));
-        assertTrue(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("<*:DEL>")));
         assertFalse(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("A")));
         assertFalse(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("T")));
         assertFalse(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("G")));
