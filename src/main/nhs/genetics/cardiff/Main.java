@@ -27,7 +27,7 @@ public class Main {
 
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
-    static final String VERSION = "1.0.0";
+    static final String VERSION = "1.1.0";
     static final String PROGRAM = "VariantReporterSpark";
     private static final int PROGRAM_ERROR_STATUS_CODE = -1;
     private static final int USER_ERROR_STATUS_CODE = 1;
@@ -133,7 +133,7 @@ public class Main {
             PedReader reader = new PedReader();
             samples = reader.parse(pedFile, EnumSet.noneOf(PedReader.MissingPedField.class), sampleDB);
         } catch (IOException e){
-            LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Could not read PED file: " + e.getMessage());
             System.exit(PROGRAM_ERROR_STATUS_CODE);
         }
 

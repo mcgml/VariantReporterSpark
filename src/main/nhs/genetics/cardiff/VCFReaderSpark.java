@@ -51,6 +51,11 @@ public class VCFReaderSpark {
         for (int n = 0; n < samples.size(); ++n){
             Sample sample = samples.get(n);
 
+            //check sample is present in VCF
+            if (!vcfHeaders.getVcfHeader().getGenotypeSamples().contains(sample.getID())){
+                throw new RuntimeException("Sample " + sample.getID() + " is not present in the genotype VCF");
+            }
+
             stratifiedVariants.add(new HashMap<>());
 
             if (sample.getAffection() == Affection.AFFECTED){
