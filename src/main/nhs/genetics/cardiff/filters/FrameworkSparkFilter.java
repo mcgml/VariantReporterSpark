@@ -121,7 +121,7 @@ public class FrameworkSparkFilter {
      * Returns allele count for alternative allele in cohort
      * @param variantContext
      * @param alternativeAllele
-     * @return
+     * @return count
      */
     public static int getCohortAlternativeAlleleCount(VariantContext variantContext, Allele alternativeAllele) {
 
@@ -140,7 +140,7 @@ public class FrameworkSparkFilter {
     /**
      * filters map<String, Long> for >1 gene occurrence
      * @param counts
-     * @return
+     * @return unique hash of genes
      */
     public static HashSet<String> getVariantsWithMultipleGeneHits(Map<String, Long> counts){
         HashSet<String> hits = new HashSet<>();
@@ -150,6 +150,15 @@ public class FrameworkSparkFilter {
             }
         }
         return hits;
+    }
+
+    /**
+     * checks if allele is spanning deletion
+     * @param allele
+     * @return bool
+     */
+    public static boolean isAlleleSpanningDeletion(Allele allele){
+        return allele.equals(Allele.SPAN_DEL);
     }
 
     /**

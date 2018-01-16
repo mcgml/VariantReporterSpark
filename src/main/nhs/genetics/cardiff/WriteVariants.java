@@ -64,7 +64,7 @@ public class WriteVariants {
 
                     //loop over alternative alleles
                     for (Allele allele : genotype.getAlleles()){
-                        if (allele.isNonReference() && !allele.getBaseString().equals("*")){
+                        if (allele.isNonReference() && !FrameworkSparkFilter.isAlleleSpanningDeletion(allele)){
 
                             int vepIndex = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
 

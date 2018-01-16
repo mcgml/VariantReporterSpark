@@ -1,5 +1,8 @@
 package nhs.genetics.cardiff.framework;
 
+import htsjdk.variant.variantcontext.Allele;
+import nhs.genetics.cardiff.filters.FrameworkSparkFilter;
+
 import java.io.Serializable;
 
 /**
@@ -22,6 +25,10 @@ public class GenomeVariant implements Serializable {
     }
 
     public void convertToMinimalRepresentation(){
+
+        if (FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create(alt)) || Allele.create(alt).isSymbolic()){
+            throw new RuntimeException("Cannot trim symbolic or spanning deletion bases");
+        }
 
         if (ref.length() == 1 && alt.length() == 1){
             return;

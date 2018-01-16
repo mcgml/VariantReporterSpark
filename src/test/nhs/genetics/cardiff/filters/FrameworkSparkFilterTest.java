@@ -75,4 +75,10 @@ public class FrameworkSparkFilterTest {
         assertEquals(2, FrameworkSparkFilter.getCohortAlternativeAlleleCount(variantContextBuilder.make(), Allele.create("TGG")));
     }
 
+    @Test
+    public void isAlleleSpanningDeletionTest() throws Exception {
+        assertTrue(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("*")));
+        assertTrue(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("<*:DEL>")));
+    }
+
 }
