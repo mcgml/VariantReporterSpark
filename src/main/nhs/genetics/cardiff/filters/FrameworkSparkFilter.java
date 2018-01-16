@@ -85,7 +85,7 @@ public class FrameworkSparkFilter {
         try {
             return Double.parseDouble(
                     variantContext
-                            .getAttributeAsStringList("GNOMAD_2.0.1_Genome_chr" + variantContext.getContig() + ".AF_POPMAX",".")
+                            .getAttributeAsStringList("GNOMAD_2.0.1_Genome_chr" + (isContigPrefixedChr(variantContext.getContig()) ? trimLeadingChrPrefix(variantContext.getContig()) : variantContext.getContig())  + ".AF_POPMAX",".")
                             .get(getAlternativeAlleleNumIndex(variantContext, alternativeAllele))
             );
         } catch (NumberFormatException|NullPointerException|IndexOutOfBoundsException e){
@@ -162,6 +162,24 @@ public class FrameworkSparkFilter {
     }
 
     /**
+     * checks if contig has chr prefix
+     * @param contig
+     * @return bool
+     */
+    public static boolean isContigPrefixedChr(String contig){
+        return contig.startsWith("chr");
+    }
+
+    /**
+     * trim leading chr prefix
+     * @param contig
+     * @return contig
+     */
+    public static String trimLeadingChrPrefix(String contig){
+        return contig.replace("chr","");
+    }
+
+    /**
      * Functional coding impact
      */
     public static final Set<String> functionalCodingImpact = new HashSet<String>(){{
@@ -190,42 +208,42 @@ public class FrameworkSparkFilter {
      * Autosomal chromosomes
      */
     public static final Set<String> autosomes = new HashSet<String>() {{
-        add("1");
-        add("2");
-        add("3");
-        add("4");
-        add("5");
-        add("6");
-        add("7");
-        add("8");
-        add("9");
-        add("10");
-        add("11");
-        add("12");
-        add("13");
-        add("14");
-        add("15");
-        add("16");
-        add("17");
-        add("18");
-        add("19");
-        add("20");
-        add("21");
-        add("22");
+        add("1"); add("chr1");
+        add("2"); add("chr2");
+        add("3"); add("chr3");
+        add("4"); add("chr4");
+        add("5"); add("chr5");
+        add("6"); add("chr6");
+        add("7"); add("chr7");
+        add("8"); add("chr8");
+        add("9"); add("chr9");
+        add("10"); add("chr10");
+        add("11"); add("chr11");
+        add("12"); add("chr12");
+        add("13"); add("chr13");
+        add("14"); add("chr14");
+        add("15"); add("chr15");
+        add("16"); add("chr16");
+        add("17"); add("chr17");
+        add("18"); add("chr18");
+        add("19"); add("chr19");
+        add("20"); add("chr20");
+        add("21"); add("chr21");
+        add("22"); add("chr22");
     }};
 
     /**
      * X chromosome
      */
     public static final Set<String> x = new HashSet<String>() {{
-        add("X");
+        add("X"); add("chrX");
     }};
 
     /**
      * Y chromosome
      */
     public static final Set<String> y = new HashSet<String>() {{
-        add("Y");
+        add("Y"); add("chrY");
     }};
 
 }

@@ -61,6 +61,13 @@ public class FrameworkSparkFilterTest {
     }
 
     @Test
+    public void areAnyAlternativeAllelesLowFrequencyChrTest() throws Exception {
+        VariantContextBuilder variantContextBuilderChr = new VariantContextBuilder(variantContextBuilder);
+        variantContextBuilderChr.chr("chr1");
+        assertEquals(true, FrameworkSparkFilter.areAnyAlternativeAllelesLowFrequency(variantContextBuilderChr.make(), 0.01));
+    }
+
+    @Test
     public void getGnomadGenomeAlternativeAlleleFrequencyTest() throws Exception{
         assertEquals(0.001, FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContextBuilder.make(), Allele.create("T", false)), 0);
     }
@@ -68,6 +75,20 @@ public class FrameworkSparkFilterTest {
     @Test
     public void getGnomadExomeAlternativeAlleleFrequencyTest() throws Exception{
         assertEquals(0.002, FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContextBuilder.make(), Allele.create("T", false)), 0);
+    }
+
+    @Test
+    public void getGnomadGenomeAlternativeAlleleFrequencyChrTest() throws Exception{
+        VariantContextBuilder variantContextBuilderChr = new VariantContextBuilder(variantContextBuilder);
+        variantContextBuilderChr.chr("chr1");
+        assertEquals(0.001, FrameworkSparkFilter.getGnomadGenomeAlternativeAlleleFrequency(variantContextBuilderChr.make(), Allele.create("T", false)), 0);
+    }
+
+    @Test
+    public void getGnomadExomeAlternativeAlleleFrequencyChrTest() throws Exception{
+        VariantContextBuilder variantContextBuilderChr = new VariantContextBuilder(variantContextBuilder);
+        variantContextBuilderChr.chr("chr1");
+        assertEquals(0.002, FrameworkSparkFilter.getGnomadExomeAlternativeAlleleFrequency(variantContextBuilderChr.make(), Allele.create("T", false)), 0);
     }
 
     @Test
@@ -82,6 +103,18 @@ public class FrameworkSparkFilterTest {
         assertFalse(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("T")));
         assertFalse(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("G")));
         assertFalse(FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("C")));
+    }
+
+    @Test
+    public void isContigPrefixedChrTest() throws Exception {
+        assertTrue(FrameworkSparkFilter.isContigPrefixedChr("chr1"));
+        assertFalse(FrameworkSparkFilter.isContigPrefixedChr("1"));
+    }
+
+    @Test
+    public void trimLeadingChrPrefixTest() throws Exception {
+        assertTrue(FrameworkSparkFilter.trimLeadingChrPrefix("chr1").equals("1"));
+        assertTrue(FrameworkSparkFilter.trimLeadingChrPrefix("1").equals("1"));
     }
 
 }
