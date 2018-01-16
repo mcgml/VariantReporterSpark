@@ -2,9 +2,8 @@ package nhs.genetics.cardiff.mappers;
 
 import htsjdk.variant.variantcontext.VariantContext;
 import org.apache.spark.api.java.function.MapFunction;
-import org.broadinstitute.gatk.engine.GATKVCFUtils;
-import org.broadinstitute.gatk.engine.samples.Sample;
-import org.broadinstitute.gatk.utils.variant.GATKVariantContextUtils;
+import org.broadinstitute.hellbender.utils.samples.Sample;
+import org.broadinstitute.hellbender.utils.variant.GATKVariantContextUtils;
 
 /**
  * Created by ml on 22/06/2017.

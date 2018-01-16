@@ -3,26 +3,26 @@ package nhs.genetics.cardiff.filters;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
 import org.apache.spark.api.java.function.Function;
-import org.broadinstitute.gatk.engine.samples.Gender;
+import org.broadinstitute.hellbender.utils.samples.Sex;
 
 public class CompoundHeterozygousSparkFilter implements Function<VariantContext, Boolean> {
     private String sample;
-    private Gender gender;
+    private Sex sex;
 
     /**
      * Identify candidate compound het variants
      * @param sample
-     * @param gender
+     * @param sex
      */
-    public CompoundHeterozygousSparkFilter(String sample, Gender gender){
+    public CompoundHeterozygousSparkFilter(String sample, Sex sex){
         this.sample = sample;
-        this.gender = gender;
+        this.sex = sex;
     }
 
     @Override
     public Boolean call(VariantContext variantContext) {
 
-        if (FrameworkSparkFilter.autosomes.contains(variantContext.getContig()) || (gender == Gender.FEMALE && FrameworkSparkFilter.x.contains(variantContext.getContig()))){
+        if (FrameworkSparkFilter.autosomes.contains(variantContext.getContig()) || (sex == Sex.FEMALE && FrameworkSparkFilter.x.contains(variantContext.getContig()))){
             return variantContext.getGenotype(sample).isHet() &&
                     variantContext.getGenotype(sample).getAlleles()
                             .stream()

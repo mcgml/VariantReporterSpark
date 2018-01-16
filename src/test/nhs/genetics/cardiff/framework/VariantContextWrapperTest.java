@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
+import static org.testng.Assert.assertNotEquals;
 
 /**
  * Created by ml on 19/07/2017.

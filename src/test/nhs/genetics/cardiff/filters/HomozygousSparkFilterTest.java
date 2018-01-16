@@ -3,7 +3,7 @@ package nhs.genetics.cardiff.filters;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.GenotypeBuilder;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.gatk.engine.samples.Gender;
+import org.broadinstitute.hellbender.utils.samples.Sex;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new HomozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
+        assertEquals(true, new HomozygousSparkFilter("sample", Sex.UNKNOWN).call(variantContextBuilder.make()));
     }
     @Test
     public void passXFemale() throws Exception {
@@ -50,7 +50,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new HomozygousSparkFilter("sample", Gender.FEMALE).call(variantContextBuilder.make()));
+        assertEquals(true, new HomozygousSparkFilter("sample", Sex.FEMALE).call(variantContextBuilder.make()));
     }
     @Test
     public void failXMale() throws Exception {
@@ -68,7 +68,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new HomozygousSparkFilter("sample", Gender.MALE).call(variantContextBuilder.make()));
+        assertEquals(false, new HomozygousSparkFilter("sample", Sex.MALE).call(variantContextBuilder.make()));
     }
     @Test
     public void failHet() throws Exception {
@@ -86,7 +86,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new HomozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
+        assertEquals(false, new HomozygousSparkFilter("sample", Sex.UNKNOWN).call(variantContextBuilder.make()));
     }
     @Test
     public void failHomRef() throws Exception {
@@ -104,7 +104,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new HomozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
+        assertEquals(false, new HomozygousSparkFilter("sample", Sex.UNKNOWN).call(variantContextBuilder.make()));
     }
     @Test
     public void failAutosomalHighAc() throws Exception {
@@ -122,7 +122,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new HomozygousSparkFilter("sample", Gender.UNKNOWN).call(variantContextBuilder.make()));
+        assertEquals(false, new HomozygousSparkFilter("sample", Sex.UNKNOWN).call(variantContextBuilder.make()));
     }
     @Test
     public void failXHighAc() throws Exception {
@@ -140,7 +140,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new HomozygousSparkFilter("sample", Gender.FEMALE).call(variantContextBuilder.make()));
+        assertEquals(false, new HomozygousSparkFilter("sample", Sex.FEMALE).call(variantContextBuilder.make()));
     }
     @Test
     public void failXHighGenomeAf() throws Exception {
@@ -160,7 +160,7 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new HomozygousSparkFilter("sample", Gender.FEMALE).call(variantContextBuilder.make()));
+        assertEquals(false, new HomozygousSparkFilter("sample", Sex.FEMALE).call(variantContextBuilder.make()));
     }
     @Test
     public void failXHighExomeAf() throws Exception {
@@ -180,6 +180,6 @@ public class HomozygousSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new HomozygousSparkFilter("sample", Gender.FEMALE).call(variantContextBuilder.make()));
+        assertEquals(false, new HomozygousSparkFilter("sample", Sex.FEMALE).call(variantContextBuilder.make()));
     }
 }

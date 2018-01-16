@@ -1,11 +1,10 @@
 package nhs.genetics.cardiff.framework.hgmd;
 
-import com.sun.javaws.exceptions.ErrorCodeResponseException;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.VariantContext;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
 import org.apache.commons.lang3.ArrayUtils;
-import org.broadinstitute.gatk.utils.variant.GATKVariantContextUtils;
+import org.broadinstitute.hellbender.utils.variant.GATKVariantContextUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

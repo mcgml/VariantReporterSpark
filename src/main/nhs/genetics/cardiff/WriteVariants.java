@@ -9,8 +9,8 @@ import nhs.genetics.cardiff.framework.panelapp.ModeOfInheritance;
 import nhs.genetics.cardiff.framework.panelapp.PanelAppRestClient;
 import nhs.genetics.cardiff.framework.panelapp.Result;
 import nhs.genetics.cardiff.framework.vep.VepAnnotationObject;
-import org.broadinstitute.gatk.engine.samples.Affection;
-import org.broadinstitute.gatk.engine.samples.Sample;
+import org.broadinstitute.hellbender.utils.samples.Affection;
+import org.broadinstitute.hellbender.utils.samples.Sample;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -96,10 +96,10 @@ public class WriteVariants {
                                     printWriter.print(genotype.getGenotypeString()); printWriter.print("\t");
 
                                     //paternal genotype
-                                    printWriter.print(sample.getFather() != null ? variantContext.getGenotype(sample.getFather().getID()).getGenotypeString() : null); printWriter.print("\t");
+                                    printWriter.print(sample.getPaternalID() != null ? variantContext.getGenotype(sample.getPaternalID()).getGenotypeString() : null); printWriter.print("\t");
 
                                     //maternal genotype
-                                    printWriter.print(sample.getMother() != null ? variantContext.getGenotype(sample.getMother().getID()).getGenotypeString() : null); printWriter.print("\t");
+                                    printWriter.print(sample.getMaternalID() != null ? variantContext.getGenotype(sample.getMaternalID()).getGenotypeString() : null); printWriter.print("\t");
 
                                     //dbSNP, cosmic etc
                                     printWriter.print(vepAnnotationObject.getDbSnpIds()); printWriter.print("\t");

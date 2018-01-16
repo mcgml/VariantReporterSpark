@@ -3,7 +3,7 @@ package nhs.genetics.cardiff.filters;
 import htsjdk.variant.variantcontext.Allele;
 import htsjdk.variant.variantcontext.GenotypeBuilder;
 import htsjdk.variant.variantcontext.VariantContextBuilder;
-import org.broadinstitute.gatk.engine.samples.Gender;
+import org.broadinstitute.hellbender.utils.samples.Sex;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class UniparentalIsodisomySparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Gender.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Sex.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void passAutosomalMaternal() throws Exception {
@@ -62,7 +62,7 @@ public class UniparentalIsodisomySparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Gender.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Sex.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void failAutosomal() throws Exception {
@@ -87,7 +87,7 @@ public class UniparentalIsodisomySparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new UniparentalIsodisomySparkFilter("sample", Gender.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(false, new UniparentalIsodisomySparkFilter("sample", Sex.UNKNOWN, "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void passXFemaleMaternal() throws Exception {
@@ -112,7 +112,7 @@ public class UniparentalIsodisomySparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Gender.FEMALE, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Sex.FEMALE, "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void passXFemalePaternal() throws Exception {
@@ -137,7 +137,7 @@ public class UniparentalIsodisomySparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Gender.FEMALE, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(true, new UniparentalIsodisomySparkFilter("sample", Sex.FEMALE, "father", "mother").call(variantContextBuilder.make()));
     }
     @Test
     public void failXMale() throws Exception {
@@ -162,6 +162,6 @@ public class UniparentalIsodisomySparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new UniparentalIsodisomySparkFilter("sample", Gender.MALE, "father", "mother").call(variantContextBuilder.make()));
+        assertEquals(false, new UniparentalIsodisomySparkFilter("sample", Sex.MALE, "father", "mother").call(variantContextBuilder.make()));
     }
 }

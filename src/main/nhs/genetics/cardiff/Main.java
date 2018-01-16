@@ -5,9 +5,7 @@ import nhs.genetics.cardiff.framework.VariantContextWrapper;
 import nhs.genetics.cardiff.framework.hgmd.HGMDProClient;
 import nhs.genetics.cardiff.framework.vep.MissingVEPHeaderException;
 import org.apache.commons.cli.*;
-import org.broadinstitute.gatk.engine.samples.PedReader;
-import org.broadinstitute.gatk.engine.samples.Sample;
-import org.broadinstitute.gatk.engine.samples.SampleDB;
+import org.broadinstitute.hellbender.utils.samples.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -130,7 +128,10 @@ public class Main {
 
         //parse PED file
         try {
-            samples = new PedReader().parse(pedFile, EnumSet.noneOf(PedReader.MissingPedField.class), new SampleDB());
+            SampleDBBuilder sampleDBBuilder = new SampleDBBuilder(PedigreeValidationType.STRICT);
+            SampleDB sampleDB = sampleDBBuilder.getFinalSampleDB();
+            PedReader reader = new PedReader();
+            samples = reader.parse(pedFile, EnumSet.noneOf(PedReader.MissingPedField.class), sampleDB);
         } catch (IOException e){
             LOGGER.log(Level.SEVERE, "Could not write variant report: " + e.getMessage());
             System.exit(PROGRAM_ERROR_STATUS_CODE);
