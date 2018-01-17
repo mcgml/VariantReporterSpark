@@ -201,7 +201,7 @@ public class FrameworkSparkFilter {
         //LOW
         add("splice_region_variant");
         add("inframe_deletion");
-        //add("synonymous_variant");
+        add("synonymous_variant");
     }};
 
     /**
