@@ -10,10 +10,12 @@ import java.util.HashSet;
 public class FunctionalConsequenceSparkFilter implements Function<VariantContext, Boolean> {
     private String sample;
     private String[] vepHeaders;
+    private boolean onlyPrintKnownRefSeq;
 
-    public FunctionalConsequenceSparkFilter(String sample, String[] vepHeaders){
+    public FunctionalConsequenceSparkFilter(String sample, String[] vepHeaders, boolean onlyPrintKnownRefSeq){
         this.sample = sample;
         this.vepHeaders = vepHeaders;
+        this.onlyPrintKnownRefSeq = onlyPrintKnownRefSeq;
     }
 
     @Override
@@ -23,12 +25,14 @@ public class FunctionalConsequenceSparkFilter implements Function<VariantContext
 
             //check all alleles for pathogenicity
             for (Allele allele : variantContext.getGenotype(sample).getAlleles()){
-                if (allele.isNonReference()){
+                if (allele.isNonReference() && !FrameworkSparkFilter.isAlleleSpanningDeletion(allele)){
 
                     int alleleNum = FrameworkSparkFilter.getVepAlleleNumIndex(variantContext, allele);
 
                     //check variant consequences for pathogenicity
                     for (VepAnnotationObject vepAnnotationObject : vepAnnotationObjects){
+                        if (!vepAnnotationObject.getFeature().startsWith("NM") && onlyPrintKnownRefSeq) continue;
+
                         if (vepAnnotationObject.getAlleleNum() == alleleNum){
 
                             for (String consequence : vepAnnotationObject.getConsequence()) {

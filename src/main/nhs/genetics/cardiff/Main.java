@@ -139,7 +139,7 @@ public class Main {
 
         //stratify variants
         ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifiedVariants = VCFReaderSpark
-                .stratifyCandidateVariants(variantCallFormatFile, vcfHeaders, samples, threads);
+                .stratifyCandidateVariants(variantCallFormatFile, vcfHeaders, samples, threads, onlyPrintKnownRefSeq);
 
         //annotate calls with on-line resources
         //todo hgmd

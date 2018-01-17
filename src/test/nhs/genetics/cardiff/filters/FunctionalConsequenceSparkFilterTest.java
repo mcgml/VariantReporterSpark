@@ -38,7 +38,7 @@ public class FunctionalConsequenceSparkFilterTest {
                         .make()
         );
 
-        assertEquals(true, new FunctionalConsequenceSparkFilter("sample", headers).call(variantContextBuilder.make()));
+        assertEquals(true, new FunctionalConsequenceSparkFilter("sample", headers, true).call(variantContextBuilder.make()));
     }
     @Test
     public void noCsq() throws Exception {
@@ -57,7 +57,7 @@ public class FunctionalConsequenceSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers).call(variantContextBuilder.make()));
+        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers, true).call(variantContextBuilder.make()));
     }
     @Test
     public void allAllelesRef() throws Exception {
@@ -77,7 +77,7 @@ public class FunctionalConsequenceSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers).call(variantContextBuilder.make()));
+        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers, true).call(variantContextBuilder.make()));
     }
     @Test
     public void noAnnotatedAllele() throws Exception {
@@ -97,7 +97,7 @@ public class FunctionalConsequenceSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers).call(variantContextBuilder.make()));
+        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers, true).call(variantContextBuilder.make()));
     }
     @Test
     public void noSignificantConsequence() throws Exception {
@@ -117,7 +117,7 @@ public class FunctionalConsequenceSparkFilterTest {
                         .make()
         );
 
-        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers).call(variantContextBuilder.make()));
+        assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers, true).call(variantContextBuilder.make()));
     }
 
 }

@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 public class VCFReaderSpark {
     private static final Logger LOGGER = Logger.getLogger(VCFReaderSpark.class.getName());
 
-    public static ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifyCandidateVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads) {
+    public static ArrayList<HashMap<VariantContextWrapper, ArrayList<FrameworkSparkFilter.Workflow>>> stratifyCandidateVariants(File file, VCFHeaders vcfHeaders, List<Sample> samples, Integer threads, boolean onlyPrintKnownRefSeq) {
 
         SparkConf sparkConf = new SparkConf().setAppName(Main.PROGRAM).setMaster("local[" + threads + "]");
         //sparkConf.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer"); // TODO production
@@ -74,7 +74,7 @@ public class VCFReaderSpark {
                     //de novo
                     for (VariantContextWrapper variantContext : informativeGenotypes
                             .filter(new DeNovoSparkFilter(sample.getID(), sample.getPaternalID(), sample.getMaternalID()))
-                            .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                            .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders(), onlyPrintKnownRefSeq))
                             .map(VariantContextWrapper::new)
                             .collect()){
 
@@ -88,7 +88,7 @@ public class VCFReaderSpark {
                     //UPD
                     for (VariantContextWrapper variantContext : informativeGenotypes
                             .filter(new UniparentalIsodisomySparkFilter(sample.getID(), sample.getSex(), sample.getPaternalID(), sample.getMaternalID()))
-                            .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                            .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders(), onlyPrintKnownRefSeq))
                             .map(VariantContextWrapper::new)
                             .collect()){
 
@@ -104,7 +104,7 @@ public class VCFReaderSpark {
                 //dominant
                 for (VariantContextWrapper variantContext : informativeGenotypes
                         .filter(new DominantSparkFilter(sample.getID(), sample.getSex()))
-                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders(), onlyPrintKnownRefSeq))
                         .map(VariantContextWrapper::new)
                         .collect()) {
 
@@ -118,7 +118,7 @@ public class VCFReaderSpark {
                 //homozygous
                 for (VariantContextWrapper variantContext : informativeGenotypes
                         .filter(new HomozygousSparkFilter(sample.getID(), sample.getSex()))
-                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()))
+                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders(), onlyPrintKnownRefSeq))
                         .map(VariantContextWrapper::new)
                         .collect()){
 
@@ -132,7 +132,7 @@ public class VCFReaderSpark {
                 //compound het candidates
                 JavaRDD<VariantContext> candidateCompoundHets = informativeGenotypes
                         .filter(new CompoundHeterozygousSparkFilter(sample.getID(), sample.getSex()))
-                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders()));
+                        .filter(new FunctionalConsequenceSparkFilter(sample.getID(), vcfHeaders.getVepHeaders(), onlyPrintKnownRefSeq));
                 candidateCompoundHets.persist(StorageLevel.MEMORY_ONLY());
 
                 //compound hets
