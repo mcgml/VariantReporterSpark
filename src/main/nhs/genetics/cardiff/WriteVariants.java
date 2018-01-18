@@ -121,6 +121,7 @@ public class WriteVariants {
                                     if (panelAppResults.containsKey(vepAnnotationObject.getSymbol())) {
                                         printWriter.print(
                                                 Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
+                                                        .filter(result -> result.getVersion() > 1)
                                                         .map(Result::getModeOfInheritance)
                                                         .filter(Objects::nonNull)
                                                         .map(ModeOfInheritance::toString)
@@ -134,6 +135,7 @@ public class WriteVariants {
                                     if (panelAppResults.containsKey(vepAnnotationObject.getSymbol())) {
                                         printWriter.print(
                                                 Arrays.stream(panelAppResults.get(vepAnnotationObject.getSymbol()))
+                                                        .filter(result -> result.getVersion() > 1)
                                                         .map(Result::getSpecificDiseaseName)
                                                         .filter(Objects::nonNull)
                                                         .distinct()

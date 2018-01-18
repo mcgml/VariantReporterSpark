@@ -14,7 +14,7 @@ public class PanelAppRestClient {
 
     public static PanelAppResponse searchByGene(String gene) throws IOException {
         return objectMapper.readValue(new URL(
-                "https://bioinfo.extge.co.uk/crowdsourcing/WebServices/search_genes/" + gene + "?format=json&LevelOfConfidence=HighEvidence"
+                "https://panelapp.genomicsengland.co.uk/WebServices/search_genes/" + gene + "?format=json&LevelOfConfidence=HighEvidence"
         ), PanelAppResponse.class);
     }
 }
