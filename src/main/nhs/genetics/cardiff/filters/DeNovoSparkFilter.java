@@ -16,7 +16,9 @@ public class DeNovoSparkFilter implements Function<VariantContext, Boolean> {
     @Override
     public Boolean call(VariantContext variantContext) {
         return variantContext.getGenotype(father).isHomRef() &&
+                !variantContext.getGenotype(father).isFiltered() &&
                 variantContext.getGenotype(mother).isHomRef() &&
+                !variantContext.getGenotype(mother).isFiltered() &&
                 variantContext.getGenotype(proband).getAlleles()
                         .stream()
                         .filter(Allele::isNonReference)

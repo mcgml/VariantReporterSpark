@@ -27,7 +27,7 @@ public class Main {
 
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
-    static final String VERSION = "1.3.0";
+    static final String VERSION = "1.3.1";
     static final String PROGRAM = "VariantReporterSpark";
     private static final int PROGRAM_ERROR_STATUS_CODE = -1;
     private static final int USER_ERROR_STATUS_CODE = 1;

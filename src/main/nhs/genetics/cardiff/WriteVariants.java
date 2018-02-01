@@ -96,10 +96,10 @@ public class WriteVariants {
                                     printWriter.print(genotype.getGenotypeString()); printWriter.print("\t");
 
                                     //paternal genotype
-                                    printWriter.print(sample.getPaternalID() != null ? variantContext.getGenotype(sample.getPaternalID()).getGenotypeString() : null); printWriter.print("\t");
+                                    printWriter.print(sample.getPaternalID() != null && !variantContext.getGenotype(sample.getPaternalID()).isFiltered() ? variantContext.getGenotype(sample.getPaternalID()).getGenotypeString() : null); printWriter.print("\t");
 
                                     //maternal genotype
-                                    printWriter.print(sample.getMaternalID() != null ? variantContext.getGenotype(sample.getMaternalID()).getGenotypeString() : null); printWriter.print("\t");
+                                    printWriter.print(sample.getMaternalID() != null && !variantContext.getGenotype(sample.getMaternalID()).isFiltered() ? variantContext.getGenotype(sample.getMaternalID()).getGenotypeString() : null); printWriter.print("\t");
 
                                     //dbSNP, cosmic etc
                                     printWriter.print(vepAnnotationObject.getDbSnpIds()); printWriter.print("\t");

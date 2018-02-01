@@ -22,6 +22,8 @@ public class UniparentalIsodisomySparkFilter implements Function<VariantContext,
         if (FrameworkSparkFilter.autosomes.contains(variantContext.getContig())){
             return variantContext.getGenotype(sample).isHomVar() &&
                     ((variantContext.getGenotype(mother).isHet() && variantContext.getGenotype(father).isHomRef()) || (variantContext.getGenotype(mother).isHomRef() && variantContext.getGenotype(father).isHet())) &&
+                    !variantContext.getGenotype(mother).isFiltered() &&
+                    !variantContext.getGenotype(father).isFiltered() &&
                     variantContext.getGenotype(sample).getAlleles()
                             .stream()
                             .filter(Allele::isNonReference)
@@ -32,6 +34,8 @@ public class UniparentalIsodisomySparkFilter implements Function<VariantContext,
         } else if (FrameworkSparkFilter.x.contains(variantContext.getContig()) && sex == Sex.FEMALE){
             return variantContext.getGenotype(sample).isHomVar() &&
                     ((variantContext.getGenotype(mother).isHomRef() && variantContext.getGenotype(father).isHomVar()) || (variantContext.getGenotype(mother).isHet() && variantContext.getGenotype(father).isHomRef())) &&
+                    !variantContext.getGenotype(mother).isFiltered() &&
+                    !variantContext.getGenotype(father).isFiltered() &&
                     variantContext.getGenotype(sample).getAlleles()
                             .stream()
                             .filter(Allele::isNonReference)
