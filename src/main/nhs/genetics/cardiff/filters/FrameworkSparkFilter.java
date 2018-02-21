@@ -158,7 +158,7 @@ public class FrameworkSparkFilter {
      * @return bool
      */
     public static boolean isAlleleSpanningDeletion(Allele allele){
-        return allele.equals(Allele.SPAN_DEL);
+        return allele.equals(Allele.SPAN_DEL) || allele.toString().equals("<*:DEL>");
     }
 
     /**

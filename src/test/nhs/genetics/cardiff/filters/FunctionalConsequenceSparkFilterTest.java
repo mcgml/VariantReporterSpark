@@ -120,4 +120,11 @@ public class FunctionalConsequenceSparkFilterTest {
         assertEquals(false, new FunctionalConsequenceSparkFilter("sample", headers, true).call(variantContextBuilder.make()));
     }
 
+    @Test
+    public void isAlleleSpanningDeletion() throws Exception {
+        assertEquals(false, FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("A")));
+        assertEquals(true, FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("*")));
+        assertEquals(true, FrameworkSparkFilter.isAlleleSpanningDeletion(Allele.create("<*:DEL>")));
+    }
+
 }
