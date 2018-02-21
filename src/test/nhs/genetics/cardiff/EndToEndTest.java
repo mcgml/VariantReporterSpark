@@ -32,7 +32,7 @@ public class EndToEndTest {
     public void deNovoWorkflow() throws Exception {
 
         //find resource
-        File file = new File(getTestDataDir() + "/vcf/CEUTrio.HiSeq.WGS.b37.bestPractices.b37.genotypes_refined_filtered.denovo.validated.vep.gnomad.vcf");
+        File file = new File(getTestDataDir() + "/vcf/NA12878.NovoSeq.TP.denovo.genotypes.filtered.vep.gnomad.vcf");
 
         //parse VCF headers
         VCFHeaders vcfHeaders = new VCFHeaders(file);
@@ -62,9 +62,11 @@ public class EndToEndTest {
 
         List<VariantContext> deNovoVariants = informativeGenotypes.filter(new DeNovoSparkFilter(sample.getID(), sample.getPaternalID(), sample.getMaternalID())).collect();
 
+        deNovoVariants.forEach(line -> System.err.println(line.getContig() + "\t" + line.getStart() + "\t" + line.getEnd()));
+
         javaSparkContext.close();
 
-        assertEquals(41, deNovoVariants.size());
+        assertEquals(72, deNovoVariants.size()); //73 total; one removed due to popmax >1%
     }
 
 }
