@@ -109,3 +109,21 @@ Identifies genotypes for downstream analysis
   - Mother is heterozygous and father is homozygous reference OR mother is homozygous reference and father is homozygous (hemizygous) alternative
   - gnomAD (Exome) allele frequency < 1%
   - gnomAD (Genome) allele frequency < 1%
+
+### Functional Consequence Filter
+
+Variant has consequence on one or more transcripts
+  - frameshift_variant
+  - incomplete_terminal_codon_variant
+  - inframe_deletion
+  - inframe_insertion
+  - initiator_codon_variant
+  - missense_variant
+  - splice_acceptor_variant
+  - splice_donor_variant
+  - splice_region_variant
+  - stop_gained
+  - stop_lost
+  - synonymous_variant
+  - transcript_ablation
+  - transcript_amplification
