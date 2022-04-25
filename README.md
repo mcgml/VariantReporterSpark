@@ -32,7 +32,7 @@ Run variant prioritise workflow
 Variants are passed through a series of filters as shown in the flowchart and described below.
 
 <p align="center">
-  <img src="https://github.com/mcgml/VariantReporterSpark/blob/master/flow.pdf">
+  <img src="https://github.com/mcgml/VariantReporterSpark/blob/master/flow.jpg">
 </p>
 
 ### Non Informative Site Filter
